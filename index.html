@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f151b">
+<title>Orðaleikur — Icelandic nouns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#0f151b; --panel:#17202a; --panel-2:#1d2833; --line:#26323e;
+  --ink:#e6eef4; --muted:#8095a4; --dim:#5b6c7a;
+  --a:#74b9d8; --b:#e0a860; --c:#b491d6;
+  --ok:#57bf92; --no:#e2685f;
+  --ui:"Space Grotesk",system-ui,-apple-system,sans-serif;
+  --serif:"Newsreader",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--ground);color:var(--ink);font-family:var(--ui);
+  display:flex;flex-direction:column;min-height:100dvh;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+button{font-family:var(--ui);cursor:pointer;border:none;background:none;color:inherit}
+button:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+
+.top{flex:none;display:flex;align-items:center;gap:10px;padding:12px 16px 8px}
+.top .back{font-family:var(--mono);font-size:11px;color:var(--dim);padding:4px 8px;border-radius:5px}
+.top .back:hover{color:var(--ink)}
+.top .spacer{flex:1}
+.pill{font-family:var(--mono);font-size:10.5px;color:var(--muted);border:1px solid var(--line);
+  border-radius:20px;padding:4px 10px}
+.pill b{color:var(--ok);font-weight:500}
+.bar{flex:none;height:2px;background:var(--line);margin:0 16px;border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--a);width:0;transition:width .3s ease}
+
+main{flex:1;display:flex;flex-direction:column;justify-content:center;padding:16px;gap:16px}
+.wrap{width:100%;max-width:560px;margin:0 auto}
+
+/* ---- menu ---- */
+h1{font-family:var(--serif);font-weight:400;font-size:34px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:14px;margin:0 0 22px;line-height:1.5}
+.lanes{display:grid;gap:9px}
+.lane{display:flex;align-items:center;gap:14px;text-align:left;width:100%;
+  background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:14px 16px}
+.lane:hover{border-color:var(--muted)}
+.lane .ico{font-family:var(--serif);font-size:24px;color:var(--a);width:30px;flex:none;text-align:center}
+.lane.locked{opacity:.4;cursor:not-allowed}
+.lane .t{flex:1;min-width:0}
+.lane .t b{display:block;font-weight:500;font-size:15px;margin-bottom:2px}
+.lane .t span{font-size:12.5px;color:var(--muted);line-height:1.4}
+.lane .n{font-family:var(--mono);font-size:11px;color:var(--dim);flex:none}
+.section{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--dim);margin:22px 0 9px}
+
+/* ---- question ---- */
+.qword{text-align:center;margin-bottom:4px}
+.seg{font-family:var(--serif);font-size:clamp(36px,11vw,58px);line-height:1.08;letter-spacing:-.015em}
+.seg.p0{color:var(--a)} .seg.p1{color:var(--b)} .seg.p2{color:var(--c)}
+.seg.plain{color:var(--ink)}
+.seam{display:inline-block;width:1px;height:.72em;background:var(--line);
+  vertical-align:baseline;margin:0 3px}
+.qhint{text-align:center;font-family:var(--mono);font-size:11px;color:var(--dim);
+  margin-bottom:18px;min-height:15px}
+
+.opts{display:grid;gap:8px}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;width:100%;
+  background:var(--panel);border:1px solid var(--line);border-radius:9px;
+  padding:15px 16px;font-size:16px;transition:border-color .12s,background .12s}
+.opt:hover:not(:disabled){border-color:var(--muted)}
+.opt:disabled{cursor:default}
+.opt .lbl{flex:1;min-width:0}
+.opt .tag{font-family:var(--serif);font-size:15px;flex:none}
+.opt.right{background:#173026;border-color:var(--ok)}
+.opt.wrong{background:#2e1d1c;border-color:var(--no)}
+.opt.wrong .tag{color:var(--no)}
+.opt.faded{opacity:.4}
+
+/* ---- reveal ---- */
+.reveal{margin-top:16px;border:1px solid var(--line);border-radius:9px;
+  background:var(--panel);padding:14px 16px}
+.reveal .rt{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:10px}
+.pieces{display:grid;gap:7px}
+.piece{display:flex;align-items:baseline;gap:10px;font-size:14.5px}
+.piece .w{font-family:var(--serif);font-size:19px;flex:none;min-width:92px}
+.piece.p0 .w{color:var(--a)} .piece.p1 .w{color:var(--b)} .piece.p2 .w{color:var(--c)}
+.piece .m{color:var(--muted)}
+.piece .known{font-family:var(--mono);font-size:9.5px;color:var(--ok);
+  border:1px solid #2c5545;border-radius:3px;padding:1px 5px}
+.litc{margin-top:11px;padding-top:11px;border-top:1px solid var(--line);
+  font-size:14px;color:var(--muted);line-height:1.5}
+.litc b{color:var(--ink);font-weight:500;font-family:var(--serif);font-size:16px}
+.builds{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.7}
+.builds b{color:var(--b);font-weight:500}
+.famrow{display:flex;align-items:baseline;gap:10px;font-size:14.5px;margin-bottom:6px}
+.famrow .fw{font-family:var(--serif);font-size:19px;min-width:108px;flex:none}
+.famrow.noun .fw{color:var(--a)} .famrow.verb .fw{color:var(--c)} .famrow.stem .fw{color:var(--b)}
+.famrow .fp{font-family:var(--mono);font-size:9.5px;color:var(--dim);min-width:34px}
+.famrow .fm{color:var(--muted)}
+.deriv{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);
+  font-size:13px;color:var(--muted);line-height:1.45}
+.deriv b{color:var(--b);font-weight:500;font-family:var(--serif);font-size:15px}
+.agree{display:grid;gap:8px}
+.arow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.arow .phrase{font-family:var(--serif);font-size:19px;flex:none;min-width:150px}
+.arow.m .phrase b{color:var(--a)} .arow.f .phrase b{color:var(--b)} .arow.n .phrase b{color:var(--c)}
+.arow .phrase b{font-weight:400}
+.arow .gl{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.arow .mean{color:var(--muted);font-size:13px}
+.degrow{display:grid;gap:7px;margin-top:2px}
+.degrow .d{display:flex;align-items:baseline;gap:10px}
+.degrow .d b{font-family:var(--serif);font-size:19px;font-weight:400;min-width:120px;flex:none}
+.degrow .d.mid b{color:var(--b)} .degrow .d.sup b{color:var(--c)}
+.degrow .d span{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.intro{max-width:520px;margin:0 auto}
+.intro h2{font-family:var(--serif);font-weight:400;font-size:30px;margin:0 0 8px}
+.intro p{color:var(--muted);font-size:14.5px;line-height:1.6;margin:0 0 14px}
+.intro .box{background:var(--panel);border:1px solid var(--line);border-radius:9px;
+  padding:14px 16px;margin-bottom:14px}
+.intro .box .rt{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--dim);margin-bottom:9px}
+.note{margin-top:10px;font-size:13px;color:var(--muted);line-height:1.45;
+  border-left:2px solid var(--b);padding-left:10px}
+
+.next{display:block;width:100%;margin-top:14px;background:var(--panel-2);
+  border:1px solid var(--line);border-radius:9px;padding:14px;font-size:15px;font-weight:500}
+.next:hover{border-color:var(--muted)}
+
+/* ---- summary ---- */
+.sum{text-align:center}
+.sum h2{font-family:var(--serif);font-weight:400;font-size:34px;margin:0 0 6px}
+.sum p{color:var(--muted);font-size:14px;margin:0 0 24px}
+.stats{display:flex;gap:30px;justify-content:center;margin-bottom:26px;font-family:var(--mono);font-size:11.5px}
+.stats div{color:var(--dim)}
+.stats b{display:block;font-size:30px;font-weight:500;color:var(--ink);margin-bottom:3px}
+.stats .ok b{color:var(--ok)}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.row button{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;
+  padding:11px 18px;font-size:14px;font-weight:500}
+.row button:hover{border-color:var(--muted)}
+.io{width:100%;height:120px;margin-top:14px;background:var(--ground);color:var(--ink);
+  border:1px solid var(--line);border-radius:8px;padding:9px;font-family:var(--mono);font-size:10.5px}
+.tiny{font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:8px}
+
+footer{flex:none;padding:10px 16px 14px;display:flex;align-items:center;gap:8px}
+footer .spacer{flex:1}
+.tog{font-family:var(--mono);font-size:10.5px;color:var(--dim);border:1px solid var(--line);
+  border-radius:6px;padding:5px 9px}
+.tog b{color:var(--ink);font-weight:500}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="top">
+  <button class="back" id="back" hidden>← back</button>
+  <span class="spacer"></span>
+  <span class="pill" id="pill"></span>
+</div>
+<div class="bar"><i id="bar"></i></div>
+<main><div class="wrap" id="app"></div></main>
+<footer>
+  <button class="tog" id="lang">glosses <b>DE</b></button>
+  <span class="spacer"></span>
+  <button class="tog" id="reset">reset progress</button>
+</footer>
+
+<script>
+const DATA={"version":1,"words":[{"wc":"noun","deg":null,"forms":null,"id":"nótt","de":["die Nacht"],"en":["night"],"g":"f","tags":["time","core"],"parts":[],"builds":[],"prod":0,"freq":483728,"d":["bók","móðir","vatn","skóli","matur","vinna","peningur","mynd","kona","borg"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"peningur","de":["das Geld"],"en":["money"],"g":"m","tags":["object","core"],"parts":[],"builds":[],"prod":0,"freq":97391,"d":["vinur","dagur","tannbursti","ísskápur","maður","matur","faðir","vinna","tími","sími"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"snjór","de":["der Schnee"],"en":["snow"],"g":"m","tags":["nature"],"parts":[],"builds":["snjóbolti"],"prod":1,"freq":22125,"d":["vindur","veður","vatn","fjall","snjóbolti","bílstjóri","munnur","hundur","ísskápur","sjónvarp"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"stóll","de":["der Stuhl"],"en":["chair"],"g":"m","tags":["object"],"parts":[],"builds":[],"prod":0,"freq":13636,"d":["bíll","snjóbolti","lykill","fótbolti","sími","kaffibolli","flöskutappi","ísskápur","sjónvarp","bók"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"hurð","de":["die Tür"],"en":["door"],"g":"f","tags":["object"],"parts":[],"builds":[],"prod":0,"freq":17543,"d":["borð","bílrúða","barnabók","lyklaborð","handklæði","tannbursti","gluggi","farsími","dagblað","ísskápur"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"hönd","de":["die Hand"],"en":["hand"],"g":"f","tags":["body"],"parts":[],"builds":["handklæði"],"prod":1,"freq":707082,"d":["munnur","mynd","fótur","auga","hugmynd","land","hundur","kvöld","sundlaug","kona"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"kaffi","de":["der Kaffee"],"en":["coffee"],"g":"n","tags":["food"],"parts":[],"builds":["kaffibolli","kaffihús"],"prod":2,"freq":28343,"d":["rauðrófa","matur","kaffihús","brauð","morgunmatur","mjólk","kaffibolli","bókasafn","sjúkrahús","lyklaborð"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"matur","de":["das Essen"],"en":["food"],"g":"m","tags":["food","core"],"parts":[],"builds":["morgunmatur"],"prod":1,"freq":260171,"d":["maður","dagur","morgunmatur","vinur","faðir","vatn","móðir","peningur","rauðrófa","ár"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"mjólk","de":["die Milch"],"en":["milk"],"g":"f","tags":["food"],"parts":[],"builds":[],"prod":0,"freq":26544,"d":["rauðrófa","matur","morgunmatur","kaffi","brauð","bók","stóll","skóli","fjall","snjóbolti"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"munnur","de":["der Mund"],"en":["mouth"],"g":"m","tags":["body"],"parts":[],"builds":[],"prod":0,"freq":8401,"d":["fótur","hundur","hönd","auga","vinur","vindur","peningur","maður","matur","hugur"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"vinna","de":["die Arbeit"],"en":["work"],"g":"f","tags":["abstract","core"],"parts":[],"builds":["vinnustaður"],"prod":1,"freq":775374,"d":["vinur","kona","vatn","mynd","hugmynd","peningur","land","barn","nótt","móðir"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"vinur","de":["der Freund"],"en":["friend"],"g":"m","tags":["people","core"],"parts":[],"builds":[],"prod":0,"freq":97920,"d":["peningur","vinna","maður","matur","dagur","vindur","faðir","bróðir","bílstjóri","barnabarn"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"auga","de":["das Auge"],"en":["eye"],"g":"n","tags":["body"],"parts":[],"builds":[],"prod":0,"freq":148819,"d":["munnur","hönd","fótur","dagblað","hugur","rauðrófa","barnabarn","gluggi","kaffi","brauð"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"barn","de":["das Kind"],"en":["child"],"g":"n","tags":["people","core"],"parts":[],"builds":["barnabarn","barnabarn","barnabók"],"prod":3,"freq":695705,"d":["vatn","barnabarn","borg","ár","land","bók","bíll","bílstjóri","vinna","maður"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["bleikur","bleikari","bleikastur"],"forms":{"kk":"bleikur","kvk":"bleik","hk":"bleikt"},"id":"bleikur","de":["rosa"],"en":["pink"],"g":null,"tags":["colour"],"parts":[],"builds":[],"prod":0,"freq":11429,"d":["blár","svartur","rauður","hvítur","gulur","fjólublár","dökkrauður","grár","brúnn","ljósgrár"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["blár","blárri","bláastur"],"forms":{"kk":"blár","kvk":"blá","hk":"blátt"},"id":"blár","de":["blau"],"en":["blue"],"g":null,"tags":["colour"],"parts":[],"builds":["dökkblár","fjólublár","ljósblár"],"prod":3,"freq":30998,"d":["ljósblár","grár","dökkblár","fjólublár","bleikur","gulur","ljósgrár","dökkgrár","brúnn","rauður"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"borg","de":["die Stadt"],"en":["city"],"g":"f","tags":["place","core"],"parts":[],"builds":[],"prod":0,"freq":232594,"d":["barn","lögregla","kona","bók","bókabúð","ár","sundlaug","bíll","vinna","peningur"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"borð","de":["der Tisch"],"en":["table"],"g":"n","tags":["object"],"parts":[],"builds":["lyklaborð"],"prod":1,"freq":556787,"d":["lyklaborð","hurð","bílrúða","dagblað","sjónvarp","fótbolti","bók","bíll","barnabók","handklæði"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"brauð","de":["das Brot"],"en":["bread"],"g":"n","tags":["food"],"parts":[],"builds":[],"prod":0,"freq":19149,"d":["rauðrófa","morgunmatur","matur","kaffi","mjólk","borð","barn","barnabarn","bókabúð","dagblað"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["breiður","breiðari","breiðastur"],"forms":{"kk":"breiður","kvk":"breið","hk":"breitt"},"id":"breiður","de":["breit"],"en":["wide"],"g":null,"tags":["object"],"parts":[],"builds":[],"prod":0,"freq":94827,"d":["heitur","sterkur","hreinn","harður","góður","þungur","vondur","stuttur","mjúkur","léttur"],"note":null,"fam":[{"w":"breidd","p":"noun","de":"die Breite","en":"width","rel":"noun","mm":false,"base":null},{"w":"breikka","p":"verb","de":"verbreitern","en":"to widen","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"bróðir","de":["der Bruder"],"en":["brother"],"g":"m","tags":["people"],"parts":[],"builds":[],"prod":0,"freq":60134,"d":["móðir","faðir","maður","bílstjóri","systir","barnabarn","vinur","barn","kona","skóli"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["brúnn","brúnni","brúnastur"],"forms":{"kk":"brúnn","kvk":"brún","hk":"brúnt"},"id":"brúnn","de":["braun"],"en":["brown"],"g":null,"tags":["colour"],"parts":[],"builds":[],"prod":0,"freq":110787,"d":["grænn","ljósgrænn","dökkgrænn","grár","blár","svartur","bleikur","dökkrauður","rauður","ljósgrár"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"bíll","de":["das Auto"],"en":["car"],"g":"m","tags":["object","core"],"parts":[],"builds":["bílrúða","bílstjóri"],"prod":2,"freq":300383,"d":["stóll","lykill","bílrúða","kaffibolli","tími","sími","fótbolti","snjóbolti","skóli","farsími"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"bók","de":["das Buch"],"en":["book"],"g":"f","tags":["object","core"],"parts":[],"builds":["barnabók","bókabúð","bókasafn"],"prod":3,"freq":175140,"d":["barnabók","nótt","borg","móðir","bílrúða","bíll","borð","barn","stóll","skóli"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"dagur","de":["der Tag"],"en":["day"],"g":"m","tags":["time","core"],"parts":[],"builds":["dagblað"],"prod":1,"freq":2181429,"d":["maður","matur","vinur","faðir","peningur","morgunn","ár","vatn","móðir","land"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["duglegur","duglegri","duglegastur"],"forms":{"kk":"duglegur","kvk":"dugleg","hk":"duglegt"},"id":"duglegur","de":["tüchtig"],"en":["hard-working"],"g":null,"tags":["people"],"parts":[],"builds":[],"prod":0,"freq":53678,"d":["rólegur","fallegur","ungur","glaður","vingjarnlegur","leiður","latur","góður","vondur","sterkur"],"note":null,"fam":[{"w":"dugnaður","p":"noun","de":"der Fleiß","en":"diligence","rel":"stem","mm":false,"base":null}],"deriv":{"stem":"dugur","suffix":"legur","note":"-legur / -leg / -legt turns a noun into an adjective, like English -ly or German -lich"}},{"wc":"adj","deg":["dýr","dýrari","dýrastur"],"forms":{"kk":"dýr","kvk":"dýr","hk":"dýrt"},"id":"dýr","de":["teuer"],"en":["expensive"],"g":null,"tags":["object"],"parts":[],"builds":[],"prod":0,"freq":344284,"d":["ódýr","nýr","vondur","kaldur","stór","mjór","góður","þungur","mjúkur","léttur"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["einmana",null,null],"forms":{"kk":"einmana","kvk":"einmana","hk":"einmana"},"id":"einmana","de":["einsam"],"en":["lonely"],"g":null,"tags":["feeling"],"parts":[],"builds":[],"prod":0,"freq":29616,"d":["veikur","reiður","leiður","heitur","syfjaður","spenntur","stressaður","þyrstur","þreyttur","svangur"],"note":"Indeclinable — one form for every gender and case.","fam":[],"deriv":null},{"wc":"adj","deg":["fallegur","fallegri","fallegastur"],"forms":{"kk":"fallegur","kvk":"falleg","hk":"fallegt"},"id":"fallegur","de":["schön"],"en":["beautiful"],"g":null,"tags":["object","people"],"parts":[],"builds":[],"prod":0,"freq":166608,"d":["rólegur","duglegur","langur","kaldur","vingjarnlegur","þungur","ungur","skítugur","léttur","ljótur"],"note":null,"fam":[{"w":"fegurð","p":"noun","de":"die Schönheit","en":"beauty","rel":"noun","mm":false,"base":null}],"deriv":{"stem":"fal","suffix":"legur","note":"-legur / -leg / -legt turns a noun into an adjective, like English -ly or German -lich"}},{"wc":"noun","deg":null,"forms":null,"id":"faðir","de":["der Vater"],"en":["father"],"g":"m","tags":["people","core"],"parts":[],"builds":[],"prod":0,"freq":113521,"d":["maður","bróðir","móðir","matur","dagur","peningur","systir","vinur","tími","bílstjóri"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["feitur","feitari","feitastur"],"forms":{"kk":"feitur","kvk":"feit","hk":"feitt"},"id":"feitur","de":["dick"],"en":["fat"],"g":null,"tags":["people"],"parts":[],"builds":[],"prod":0,"freq":14713,"d":["reiður","leiður","ljótur","latur","sterkur","fallegur","vondur","ungur","góður","glaður"],"note":null,"fam":[{"w":"fita","p":"noun","de":"das Fett","en":"fat","rel":"noun","mm":false,"base":null},{"w":"fitna","p":"verb","de":"dick werden","en":"to get fat","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"fjall","de":["der Berg"],"en":["mountain"],"g":"n","tags":["nature"],"parts":[],"builds":[],"prod":0,"freq":86398,"d":["vatn","veður","vindur","snjór","stóll","mjólk","bíll","sjónvarp","sjúkrahús","lykill"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["fyndinn","fyndnari","fyndnastur"],"forms":{"kk":"fyndinn","kvk":"fyndin","hk":"fyndið"},"id":"fyndinn","de":["lustig"],"en":["funny"],"g":null,"tags":["people"],"parts":[],"builds":[],"prod":0,"freq":15929,"d":["hávaxinn","lágvaxinn","vondur","vingjarnlegur","ungur","feitur","fallegur","sterkur","rólegur","reiður"],"note":null,"fam":[{"w":"fyndni","p":"noun","de":"der Humor","en":"humour","rel":"noun","mm":false,"base":null}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"fótur","de":["der Fuß","das Bein"],"en":["foot","leg"],"g":"m","tags":["body"],"parts":[],"builds":["fótbolti"],"prod":1,"freq":82982,"d":["munnur","matur","köttur","hönd","auga","vinur","maður","hugur","faðir","dagur"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["gamall","eldri","elstur"],"forms":{"kk":"gamall","kvk":"gömul","hk":"gamalt"},"id":"gamall","de":["alt"],"en":["old"],"g":null,"tags":["people","object"],"parts":[],"builds":[],"prod":0,"freq":2245871,"d":["lítill","gáfaður","grannur","vingjarnlegur","lágvaxinn","mjór","latur","langur","kaldur","harður"],"note":"Irregular comparison: gamall, eldri, elstur.","fam":[{"w":"elli","p":"noun","de":"das Alter","en":"old age","rel":"noun","mm":false,"base":null},{"w":"eldast","p":"verb","de":"altern","en":"to age","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"gata","de":["die Straße"],"en":["street"],"g":"f","tags":["place"],"parts":[],"builds":[],"prod":0,"freq":88895,"d":["lögregla","veitingastaður","bókabúð","sundlaug","land","bókasafn","vinnustaður","kaffihús","borg","sjúkrahús"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["glaður","glaðari","glaðastur"],"forms":{"kk":"glaður","kvk":"glöð","hk":"glatt"},"id":"glaður","de":["froh"],"en":["happy"],"g":null,"tags":["people","feeling"],"parts":[],"builds":[],"prod":0,"freq":33275,"d":["gáfaður","latur","góður","grannur","syfjaður","reiður","leiður","duglegur","svangur","rólegur"],"note":null,"fam":[{"w":"gleði","p":"noun","de":"die Freude","en":"joy","rel":"noun","mm":false,"base":null},{"w":"gleðja","p":"verb","de":"erfreuen","en":"to gladden","rel":"verb","mm":false,"base":null}],"deriv":{"stem":null,"suffix":"aður","note":"-aður forms an adjective from a noun, like English -ed"}},{"wc":"noun","deg":null,"forms":null,"id":"gluggi","de":["das Fenster"],"en":["window"],"g":"m","tags":["object"],"parts":[],"builds":[],"prod":0,"freq":64095,"d":["flöskutappi","tannbursti","sími","farsími","peningur","fótbolti","snjóbolti","kaffibolli","hurð","bílrúða"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["grannur","grennri","grennstur"],"forms":{"kk":"grannur","kvk":"grönn","hk":"grannt"},"id":"grannur","de":["schlank"],"en":["slim"],"g":null,"tags":["people"],"parts":[],"builds":[],"prod":0,"freq":31829,"d":["glaður","vondur","ungur","reiður","latur","góður","gáfaður","vingjarnlegur","sterkur","rólegur"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["grár","grárri","gráastur"],"forms":{"kk":"grár","kvk":"grá","hk":"grátt"},"id":"grár","de":["grau"],"en":["grey"],"g":null,"tags":["colour"],"parts":[],"builds":["dökkgrár","ljósgrár"],"prod":2,"freq":60412,"d":["ljósgrár","dökkgrár","blár","gulur","grænn","svartur","ljósblár","dökkblár","ljósgrænn","fjólublár"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["grænn","grænni","grænastur"],"forms":{"kk":"grænn","kvk":"græn","hk":"grænt"},"id":"grænn","de":["grün"],"en":["green"],"g":null,"tags":["colour"],"parts":[],"builds":["dökkgrænn","ljósgrænn"],"prod":2,"freq":374272,"d":["brúnn","ljósgrænn","dökkgrænn","grár","gulur","svartur","ljósgrár","dökkgrár","dökkrauður","rauður"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["gulur","gulari","gulastur"],"forms":{"kk":"gulur","kvk":"gul","hk":"gult"},"id":"gulur","de":["gelb"],"en":["yellow"],"g":null,"tags":["colour"],"parts":[],"builds":[],"prod":0,"freq":89390,"d":["rauður","grár","blár","hvítur","fjólublár","dökkrauður","svartur","bleikur","ljósblár","dökkblár"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["gáfaður","gáfaðri","gáfaðastur"],"forms":{"kk":"gáfaður","kvk":"gáfuð","hk":"gáfað"},"id":"gáfaður","de":["klug"],"en":["clever"],"g":null,"tags":["people"],"parts":[],"builds":[],"prod":0,"freq":2610,"d":["glaður","góður","reiður","leiður","latur","grannur","vondur","ungur","sterkur","rólegur"],"note":null,"fam":[{"w":"gáfa","p":"noun","de":"die Begabung","en":"talent","rel":"stem","mm":false,"base":null}],"deriv":{"stem":"gáfa","suffix":"aður","note":"-aður forms an adjective from a noun, like English -ed"}},{"wc":"adj","deg":["góður","betri","bestur"],"forms":{"kk":"góður","kvk":"góð","hk":"gott"},"id":"góður","de":["gut"],"en":["good"],"g":null,"tags":["object","people"],"parts":[],"builds":[],"prod":0,"freq":6976025,"d":["glaður","gáfaður","reiður","ljótur","leiður","harður","rólegur","grannur","breiður","ódýr"],"note":"Irregular comparison: góður, betri, bestur.","fam":[{"w":"gæska","p":"noun","de":"die Güte","en":"goodness","rel":"noun","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["harður","harðari","harðastur"],"forms":{"kk":"harður","kvk":"hörð","hk":"hart"},"id":"harður","de":["hart"],"en":["hard"],"g":null,"tags":["object"],"parts":[],"builds":[],"prod":0,"freq":231217,"d":["langur","kaldur","heitur","góður","sterkur","breiður","fallegur","þungur","vondur","mjúkur"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["heitur","heitari","heitastur"],"forms":{"kk":"heitur","kvk":"heit","hk":"heitt"},"id":"heitur","de":["heiß"],"en":["hot"],"g":null,"tags":["object","feeling"],"parts":[],"builds":[],"prod":0,"freq":238936,"d":["veikur","reiður","leiður","breiður","þreyttur","spenntur","léttur","ljótur","harður","þyrstur"],"note":null,"fam":[{"w":"hiti","p":"noun","de":"die Hitze","en":"heat","rel":"noun","mm":false,"base":null},{"w":"hitna","p":"verb","de":"heiß werden","en":"to get hot","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["hreinn","hreinni","hreinastur"],"forms":{"kk":"hreinn","kvk":"hrein","hk":"hreint"},"id":"hreinn","de":["sauber"],"en":["clean"],"g":null,"tags":["object"],"parts":[],"builds":[],"prod":0,"freq":354717,"d":["breiður","hringlaga","heitur","lítill","harður","sterkur","fallegur","þungur","ódýr","vondur"],"note":null,"fam":[{"w":"hreinsa","p":"verb","de":"reinigen","en":"to clean","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["hræddur","hræddari","hræddastur"],"forms":{"kk":"hræddur","kvk":"hrædd","hk":"hrætt"},"id":"hræddur","de":["verängstigt"],"en":["afraid"],"g":null,"tags":["feeling"],"parts":[],"builds":[],"prod":0,"freq":43208,"d":["reiður","kaldur","heitur","þreyttur","stressaður","þyrstur","veikur","svangur","rólegur","leiður"],"note":null,"fam":[{"w":"hræðsla","p":"noun","de":"die Angst","en":"fear","rel":"noun","mm":false,"base":null},{"w":"hræðast","p":"verb","de":"sich fürchten","en":"to be afraid","rel":"verb","mm":true,"base":"hræða"}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"hugur","de":["der Sinn","der Geist"],"en":["mind"],"g":"m","tags":["abstract"],"parts":[],"builds":["hugmynd"],"prod":1,"freq":196209,"d":["hugmynd","hundur","dagur","vinna","munnur","vinur","maður","matur","fótur","peningur"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"hundur","de":["der Hund"],"en":["dog"],"g":"m","tags":["animal"],"parts":[],"builds":[],"prod":0,"freq":19789,"d":["köttur","vindur","munnur","hugur","vinur","sundlaug","peningur","hönd","morgunmatur","snjór"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["hvítur","hvítari","hvítastur"],"forms":{"kk":"hvítur","kvk":"hvít","hk":"hvítt"},"id":"hvítur","de":["weiß"],"en":["white"],"g":null,"tags":["colour"],"parts":[],"builds":[],"prod":0,"freq":114806,"d":["svartur","rauður","gulur","bleikur","fjólublár","dökkrauður","grár","blár","ljósgrár","ljósblár"],"note":null,"fam":[{"w":"hvítna","p":"verb","de":"weiß werden","en":"to turn white","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"hús","de":["das Haus"],"en":["house"],"g":"n","tags":["place","core"],"parts":[],"builds":["eldhús","kaffihús","sjúkrahús"],"prod":3,"freq":459620,"d":["eldhús","kaffihús","sjúkrahús","háskóli","bókasafn","bókabúð","ár","vatn","land","barn"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["kaldur","kaldari","kaldastur"],"forms":{"kk":"kaldur","kvk":"köld","hk":"kalt"},"id":"kaldur","de":["kalt"],"en":["cold"],"g":null,"tags":["object","feeling"],"parts":[],"builds":[],"prod":0,"freq":117674,"d":["vondur","langur","harður","fallegur","svangur","rólegur","hræddur","skítugur","þungur","ódýr"],"note":null,"fam":[{"w":"kuldi","p":"noun","de":"die Kälte","en":"cold","rel":"noun","mm":false,"base":null},{"w":"kólna","p":"verb","de":"kalt werden","en":"to get cold","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"kona","de":["die Frau"],"en":["woman"],"g":"f","tags":["people","core"],"parts":[],"builds":[],"prod":0,"freq":537061,"d":["vinna","mynd","borg","land","barnabarn","vinur","skóli","systir","peningur","nótt"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["kurteis","kurteisari","kurteisastur"],"forms":{"kk":"kurteis","kvk":"kurteis","hk":"kurteist"},"id":"kurteis","de":["höflich"],"en":["polite"],"g":null,"tags":["people"],"parts":[],"builds":[],"prod":0,"freq":4075,"d":["duglegur","vingjarnlegur","ungur","reiður","ljótur","latur","feitur","hávaxinn","fallegur","lágvaxinn"],"note":null,"fam":[{"w":"kurteisi","p":"noun","de":"die Höflichkeit","en":"politeness","rel":"noun","mm":false,"base":null}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"kvöld","de":["der Abend"],"en":["evening"],"g":"n","tags":["time"],"parts":[],"builds":[],"prod":0,"freq":1343032,"d":["ár","tími","nótt","morgunn","dagur","hönd","vatn","land","kaffi","fjall"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"köttur","de":["die Katze"],"en":["cat"],"g":"m","tags":["animal"],"parts":[],"builds":[],"prod":0,"freq":7594,"d":["hundur","matur","fótur","vinur","vindur","munnur","maður","hugur","dagur","veitingastaður"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"land","de":["das Land"],"en":["country","land"],"g":"n","tags":["place","core"],"parts":[],"builds":[],"prod":0,"freq":1362421,"d":["mynd","vatn","barn","eldhús","sundlaug","kona","kaffihús","gata","bókasafn","sjúkrahús"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["langur","lengri","lengstur"],"forms":{"kk":"langur","kvk":"löng","hk":"langt"},"id":"langur","de":["lang"],"en":["long"],"g":null,"tags":["object"],"parts":[],"builds":[],"prod":0,"freq":2479805,"d":["þungur","vondur","léttur","ljótur","kaldur","harður","fallegur","skítugur","nýr","mjúkur"],"note":null,"fam":[{"w":"lengd","p":"noun","de":"die Länge","en":"length","rel":"noun","mm":false,"base":null},{"w":"lengja","p":"verb","de":"verlängern","en":"to lengthen","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["latur","latari","latastur"],"forms":{"kk":"latur","kvk":"löt","hk":"latt"},"id":"latur","de":["faul"],"en":["lazy"],"g":null,"tags":["people"],"parts":[],"builds":[],"prod":0,"freq":791,"d":["ljótur","glaður","leiður","feitur","rólegur","gáfaður","grannur","ungur","góður","fallegur"],"note":null,"fam":[{"w":"leti","p":"noun","de":"die Faulheit","en":"laziness","rel":"noun","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["leiður","leiðari","leiðastur"],"forms":{"kk":"leiður","kvk":"leið","hk":"leitt"},"id":"leiður","de":["traurig"],"en":["sad"],"g":null,"tags":["people","feeling"],"parts":[],"builds":[],"prod":0,"freq":2025434,"d":["reiður","veikur","heitur","feitur","ljótur","latur","góður","glaður","sterkur","rólegur"],"note":null,"fam":[{"w":"leiðindi","p":"noun","de":"die Langeweile","en":"boredom","rel":"noun","mm":false,"base":null},{"w":"leiðast","p":"verb","de":"sich langweilen","en":"to be bored","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["ljótur","ljótari","ljótastur"],"forms":{"kk":"ljótur","kvk":"ljót","hk":"ljótt"},"id":"ljótur","de":["hässlich"],"en":["ugly"],"g":null,"tags":["object","people"],"parts":[],"builds":[],"prod":0,"freq":14209,"d":["léttur","latur","mjúkur","mjór","leiður","langur","heitur","góður","feitur","stuttur"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"lykill","de":["der Schlüssel"],"en":["key"],"g":"m","tags":["object"],"parts":[],"builds":["lyklaborð"],"prod":1,"freq":8519,"d":["stóll","bíll","kaffibolli","lyklaborð","flöskutappi","sími","ísskápur","peningur","fótbolti","snjóbolti"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["léttur","léttari","léttastur"],"forms":{"kk":"léttur","kvk":"létt","hk":"létt"},"id":"léttur","de":["leicht"],"en":["light in weight"],"g":null,"tags":["object"],"parts":[],"builds":[],"prod":0,"freq":227795,"d":["ljótur","stuttur","langur","heitur","skítugur","fallegur","þungur","vondur","stór","mjúkur"],"note":null,"fam":[{"w":"létta","p":"verb","de":"erleichtern","en":"to lighten","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["lítill","minni","minnstur"],"forms":{"kk":"lítill","kvk":"lítil","hk":"lítið"},"id":"lítill","de":["klein"],"en":["small"],"g":null,"tags":["object"],"parts":[],"builds":[],"prod":0,"freq":5562044,"d":["léttur","gamall","skítugur","stór","ljótur","langur","hreinn","stuttur","breiður","fallegur"],"note":"Irregular comparison: lítill, minni, minnstur.","fam":[{"w":"minnka","p":"verb","de":"verkleinern","en":"to reduce","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"maður","de":["der Mann","der Mensch"],"en":["man","person"],"g":"m","tags":["people","core"],"parts":[],"builds":[],"prod":0,"freq":1754333,"d":["matur","faðir","dagur","móðir","vinur","bróðir","peningur","bílstjóri","barnabarn","ár"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["mjór","mjórri","mjóstur"],"forms":{"kk":"mjór","kvk":"mjó","hk":"mjótt"},"id":"mjór","de":["dünn"],"en":["thin"],"g":null,"tags":["people","object"],"parts":[],"builds":[],"prod":0,"freq":9026,"d":["stór","mjúkur","ljótur","ódýr","nýr","dýr","ungur","latur","góður","þungur"],"note":null,"fam":[{"w":"mjókka","p":"verb","de":"schmaler werden","en":"to narrow","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["mjúkur","mýkri","mýkstur"],"forms":{"kk":"mjúkur","kvk":"mjúk","hk":"mjúkt"},"id":"mjúkur","de":["weich"],"en":["soft"],"g":null,"tags":["object"],"parts":[],"builds":[],"prod":0,"freq":14757,"d":["mjór","ljótur","sterkur","þungur","vondur","léttur","langur","kaldur","heitur","harður"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"morgunn","de":["der Morgen"],"en":["morning"],"g":"m","tags":["time"],"parts":[],"builds":["morgunmatur"],"prod":1,"freq":420013,"d":["dagur","ár","tími","morgunmatur","nótt","kvöld","borg","munnur","maður","matur"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"mynd","de":["das Bild"],"en":["picture","image"],"g":"f","tags":["object","core"],"parts":[],"builds":["hugmynd"],"prod":1,"freq":529005,"d":["land","kona","vinna","móðir","barnabók","handklæði","vinur","maður","matur","lykill"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"móðir","de":["die Mutter"],"en":["mother"],"g":"f","tags":["people","core"],"parts":[],"builds":[],"prod":0,"freq":128056,"d":["bróðir","maður","faðir","systir","matur","nótt","mynd","bók","peningur","ár"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["nýr","nýrri","nýjastur"],"forms":{"kk":"nýr","kvk":"ný","hk":"nýtt"},"id":"nýr","de":["neu"],"en":["new"],"g":null,"tags":["object"],"parts":[],"builds":[],"prod":0,"freq":4913337,"d":["dýr","ódýr","þungur","vondur","langur","stór","mjór","góður","mjúkur","léttur"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["rauður","rauðari","rauðastur"],"forms":{"kk":"rauður","kvk":"rauð","hk":"rautt"},"id":"rauður","de":["rot"],"en":["red"],"g":null,"tags":["colour"],"parts":[],"builds":["dökkrauður","rauðrófa"],"prod":2,"freq":225471,"d":["dökkrauður","gulur","svartur","hvítur","bleikur","fjólublár","grár","blár","ljósgrár","ljósblár"],"note":"Highly productive first element: rauðrófa, rauðvín, rauðkál.","fam":[{"w":"roði","p":"noun","de":"die Röte","en":"redness","rel":"noun","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["reiður","reiðari","reiðastur"],"forms":{"kk":"reiður","kvk":"reið","hk":"reitt"},"id":"reiður","de":["wütend"],"en":["angry"],"g":null,"tags":["people","feeling"],"parts":[],"builds":[],"prod":0,"freq":140421,"d":["leiður","veikur","heitur","feitur","þreyttur","stressaður","góður","glaður","sterkur","rólegur"],"note":null,"fam":[{"w":"reiði","p":"noun","de":"die Wut","en":"anger","rel":"noun","mm":false,"base":null},{"w":"reiðast","p":"verb","de":"wütend werden","en":"to get angry","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["rólegur","rólegri","rólegastur"],"forms":{"kk":"rólegur","kvk":"róleg","hk":"rólegt"},"id":"rólegur","de":["ruhig"],"en":["calm"],"g":null,"tags":["people","feeling"],"parts":[],"builds":[],"prod":0,"freq":119016,"d":["fallegur","duglegur","vingjarnlegur","ungur","svangur","reiður","leiður","latur","kaldur","góður"],"note":"ró (calm) + -legur. The suffix -legur/-leg/-legt turns a noun into an adjective, like English -ly or German -lich.","fam":[{"w":"ró","p":"noun","de":"die Ruhe","en":"calm","rel":"stem","mm":false,"base":null}],"deriv":{"stem":"ró","suffix":"legur","note":"-legur / -leg / -legt turns a noun into an adjective, like English -ly or German -lich"}},{"wc":"adj","deg":["skítugur","skítugri","skítugastur"],"forms":{"kk":"skítugur","kvk":"skítug","hk":"skítugt"},"id":"skítugur","de":["schmutzig"],"en":["dirty"],"g":null,"tags":["object"],"parts":[],"builds":[],"prod":0,"freq":1995,"d":["stuttur","þungur","stór","sterkur","léttur","ljótur","langur","kaldur","heitur","fallegur"],"note":null,"fam":[{"w":"skítur","p":"noun","de":"der Schmutz","en":"dirt","rel":"noun","mm":false,"base":null}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"skóli","de":["die Schule"],"en":["school"],"g":"m","tags":["place","core"],"parts":[],"builds":["háskóli"],"prod":1,"freq":287325,"d":["háskóli","tími","bíll","sundlaug","sjúkrahús","vinnustaður","nótt","móðir","kona","bók"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["spenntur","spenntari","spenntastur"],"forms":{"kk":"spenntur","kvk":"spennt","hk":"spennt"},"id":"spenntur","de":["aufgeregt"],"en":["excited"],"g":null,"tags":["feeling"],"parts":[],"builds":[],"prod":0,"freq":48749,"d":["þreyttur","svangur","heitur","stressaður","þyrstur","veikur","syfjaður","reiður","leiður","rólegur"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["sterkur","sterkari","sterkastur"],"forms":{"kk":"sterkur","kvk":"sterk","hk":"sterkt"},"id":"sterkur","de":["stark"],"en":["strong"],"g":null,"tags":["people","object"],"parts":[],"builds":[],"prod":0,"freq":618048,"d":["stuttur","stór","reiður","mjúkur","leiður","heitur","harður","feitur","breiður","skítugur"],"note":null,"fam":[{"w":"styrkur","p":"noun","de":"die Stärke","en":"strength","rel":"noun","mm":false,"base":null},{"w":"styrkja","p":"verb","de":"stärken","en":"to strengthen","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["stressaður","stressaðri","stressaðastur"],"forms":{"kk":"stressaður","kvk":"stressuð","hk":"stressað"},"id":"stressaður","de":["gestresst"],"en":["stressed"],"g":null,"tags":["feeling"],"parts":[],"builds":[],"prod":0,"freq":3699,"d":["syfjaður","reiður","þyrstur","þreyttur","spenntur","leiður","glaður","veikur","svangur","rólegur"],"note":null,"fam":[],"deriv":{"stem":"stress","suffix":"aður","note":"-aður forms an adjective from a noun, like English -ed"}},{"wc":"adj","deg":["stuttur","styttri","stystur"],"forms":{"kk":"stuttur","kvk":"stutt","hk":"stutt"},"id":"stuttur","de":["kurz"],"en":["short"],"g":null,"tags":["object"],"parts":[],"builds":[],"prod":0,"freq":854891,"d":["sterkur","léttur","skítugur","þungur","stór","ljótur","heitur","vondur","mjúkur","langur"],"note":null,"fam":[{"w":"stytta","p":"verb","de":"verkürzen","en":"to shorten","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["stór","stærri","stærstur"],"forms":{"kk":"stór","kvk":"stór","hk":"stórt"},"id":"stór","de":["groß"],"en":["big"],"g":null,"tags":["object"],"parts":[],"builds":[],"prod":0,"freq":2546362,"d":["mjór","stuttur","sterkur","skítugur","léttur","ljótur","heitur","ódýr","nýr","dýr"],"note":"Irregular comparison: stór, stærri, stærstur.","fam":[{"w":"stærð","p":"noun","de":"die Größe","en":"size","rel":"noun","mm":false,"base":null},{"w":"stækka","p":"verb","de":"vergrößern","en":"to enlarge","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["svangur","svengri","svengstur"],"forms":{"kk":"svangur","kvk":"svöng","hk":"svangt"},"id":"svangur","de":["hungrig"],"en":["hungry"],"g":null,"tags":["feeling"],"parts":[],"builds":[],"prod":0,"freq":2086,"d":["spenntur","veikur","rólegur","kaldur","glaður","syfjaður","stressaður","þyrstur","reiður","leiður"],"note":null,"fam":[{"w":"hungur","p":"noun","de":"der Hunger","en":"hunger","rel":"noun","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["svartur","svartari","svartastur"],"forms":{"kk":"svartur","kvk":"svört","hk":"svart"},"id":"svartur","de":["schwarz"],"en":["black"],"g":null,"tags":["colour"],"parts":[],"builds":[],"prod":0,"freq":86988,"d":["hvítur","rauður","dökkrauður","gulur","grár","bleikur","grænn","brúnn","blár","ljósgrár"],"note":null,"fam":[{"w":"sverta","p":"verb","de":"schwärzen","en":"to blacken","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["syfjaður","syfjaðri","syfjaðastur"],"forms":{"kk":"syfjaður","kvk":"syfjuð","hk":"syfjað"},"id":"syfjaður","de":["schläfrig"],"en":["sleepy"],"g":null,"tags":["feeling"],"parts":[],"builds":[],"prod":0,"freq":104,"d":["stressaður","glaður","þyrstur","svangur","spenntur","reiður","leiður","þreyttur","veikur","rólegur"],"note":null,"fam":[],"deriv":{"stem":"syfja","suffix":"aður","note":"-aður forms an adjective from a noun, like English -ed"}},{"wc":"noun","deg":null,"forms":null,"id":"systir","de":["die Schwester"],"en":["sister"],"g":"f","tags":["people"],"parts":[],"builds":[],"prod":0,"freq":69567,"d":["móðir","faðir","bílstjóri","bróðir","vinur","maður","kona","barnabarn","barn","sími"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"sími","de":["das Telefon"],"en":["telephone"],"g":"m","tags":["object"],"parts":[],"builds":["farsími"],"prod":1,"freq":172345,"d":["farsími","bíll","snjóbolti","stóll","flöskutappi","lykill","gluggi","ísskápur","tími","peningur"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"tími","de":["die Zeit"],"en":["time"],"g":"m","tags":["time","core"],"parts":[],"builds":[],"prod":0,"freq":3679604,"d":["bíll","skóli","faðir","sími","peningur","móðir","vinur","morgunn","maður","matur"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["ungur","yngri","yngstur"],"forms":{"kk":"ungur","kvk":"ung","hk":"ungt"},"id":"ungur","de":["jung"],"en":["young"],"g":null,"tags":["people"],"parts":[],"builds":[],"prod":0,"freq":1358058,"d":["vondur","duglegur","rólegur","grannur","latur","góður","fallegur","reiður","ljótur","leiður"],"note":null,"fam":[{"w":"æska","p":"noun","de":"die Jugend","en":"youth","rel":"noun","mm":false,"base":null}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"vatn","de":["das Wasser"],"en":["water"],"g":"n","tags":["nature","core"],"parts":[],"builds":[],"prod":0,"freq":108677,"d":["barn","vinna","matur","land","veður","fjall","nótt","vinur","maður","faðir"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["veikur","veikari","veikastur"],"forms":{"kk":"veikur","kvk":"veik","hk":"veikt"},"id":"veikur","de":["krank"],"en":["sick"],"g":null,"tags":["feeling"],"parts":[],"builds":[],"prod":0,"freq":77684,"d":["reiður","leiður","heitur","svangur","þreyttur","spenntur","kaldur","glaður","stressaður","þyrstur"],"note":null,"fam":[{"w":"veikindi","p":"noun","de":"die Krankheit","en":"illness","rel":"noun","mm":false,"base":null},{"w":"veikja","p":"verb","de":"schwächen","en":"to weaken","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"veður","de":["das Wetter"],"en":["weather"],"g":"n","tags":["nature"],"parts":[],"builds":[],"prod":0,"freq":143270,"d":["vindur","vatn","snjór","fjall","vinur","maður","móðir","matur","hugur","fótur"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"vindur","de":["der Wind"],"en":["wind"],"g":"m","tags":["nature"],"parts":[],"builds":[],"prod":0,"freq":27115,"d":["veður","snjór","vinur","hundur","vatn","peningur","munnur","fjall","vinnustaður","vinna"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["vingjarnlegur","vingjarnlegri","vingjarnlegastur"],"forms":{"kk":"vingjarnlegur","kvk":"vingjarnleg","hk":"vingjarnlegt"},"id":"vingjarnlegur","de":["freundlich"],"en":["friendly"],"g":null,"tags":["people"],"parts":[],"builds":[],"prod":0,"freq":690,"d":["rólegur","fallegur","duglegur","grannur","vondur","ungur","glaður","sterkur","reiður","ljótur"],"note":null,"fam":[{"w":"vinur","p":"noun","de":"der Freund","en":"friend","rel":"stem","mm":false,"base":null},{"w":"vinátta","p":"noun","de":"die Freundschaft","en":"friendship","rel":"noun","mm":false,"base":null}],"deriv":{"stem":null,"suffix":"legur","note":"-legur / -leg / -legt turns a noun into an adjective, like English -ly or German -lich"}},{"wc":"adj","deg":["vondur","verri","verstur"],"forms":{"kk":"vondur","kvk":"vond","hk":"vont"},"id":"vondur","de":["schlecht"],"en":["bad"],"g":null,"tags":["object","people"],"parts":[],"builds":[],"prod":0,"freq":590482,"d":["þungur","ungur","langur","kaldur","grannur","ódýr","reiður","nýr","mjúkur","léttur"],"note":null,"fam":[{"w":"vonska","p":"noun","de":"die Bosheit","en":"malice","rel":"noun","mm":false,"base":null}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"ár","de":["das Jahr"],"en":["year"],"g":"n","tags":["time","core"],"parts":[],"builds":[],"prod":0,"freq":5035583,"d":["barn","borg","vinur","móðir","maður","matur","faðir","dagur","morgunn","vatn"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["ódýr","ódýrari","ódýrastur"],"forms":{"kk":"ódýr","kvk":"ódýr","hk":"ódýrt"},"id":"ódýr","de":["billig"],"en":["cheap"],"g":null,"tags":["object"],"parts":[],"builds":[],"prod":0,"freq":146976,"d":["dýr","nýr","góður","vondur","ljótur","kaldur","stór","mjór","þungur","mjúkur"],"note":"The prefix ó- negates any adjective: ódýr, óhreinn, ólíkur.","fam":[],"deriv":null},{"wc":"adj","deg":["þreyttur","þreyttari","þreyttastur"],"forms":{"kk":"þreyttur","kvk":"þreytt","hk":"þreytt"},"id":"þreyttur","de":["müde"],"en":["tired"],"g":null,"tags":["feeling"],"parts":[],"builds":[],"prod":0,"freq":27159,"d":["þyrstur","spenntur","reiður","heitur","stressaður","veikur","rólegur","leiður","hræddur","syfjaður"],"note":null,"fam":[{"w":"þreyta","p":"noun","de":"die Müdigkeit","en":"tiredness","rel":"noun","mm":false,"base":null},{"w":"þreytast","p":"verb","de":"müde werden","en":"to get tired","rel":"verb","mm":true,"base":"þreyta"}],"deriv":null},{"wc":"adj","deg":["þungur","þyngri","þyngstur"],"forms":{"kk":"þungur","kvk":"þung","hk":"þungt"},"id":"þungur","de":["schwer"],"en":["heavy"],"g":null,"tags":["object"],"parts":[],"builds":[],"prod":0,"freq":250306,"d":["langur","vondur","stuttur","skítugur","fallegur","nýr","mjúkur","léttur","ljótur","kaldur"],"note":null,"fam":[{"w":"þyngd","p":"noun","de":"das Gewicht","en":"weight","rel":"noun","mm":false,"base":null},{"w":"þyngja","p":"verb","de":"beschweren","en":"to make heavier","rel":"verb","mm":false,"base":null}],"deriv":null},{"wc":"adj","deg":["þyrstur","þyrstari","þyrstastur"],"forms":{"kk":"þyrstur","kvk":"þyrst","hk":"þyrst"},"id":"þyrstur","de":["durstig"],"en":["thirsty"],"g":null,"tags":["feeling"],"parts":[],"builds":[],"prod":0,"freq":771,"d":["þreyttur","heitur","stressaður","syfjaður","spenntur","veikur","svangur","rólegur","reiður","leiður"],"note":null,"fam":[{"w":"þorsti","p":"noun","de":"der Durst","en":"thirst","rel":"noun","mm":false,"base":null}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"bílrúða","de":["die Autoscheibe"],"en":["car window"],"g":"f","tags":["object"],"parts":[{"surface":"bíl","lemma":"bíll","de":"das Auto","en":"car"},{"surface":"rúða","lemma":"rúða","de":"die Scheibe","en":"pane"}],"builds":[],"prod":0,"freq":209,"d":["bílstjóri","bíll","borð","hurð","bók","barnabók","sími","gluggi","mynd","lyklaborð"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"handklæði","de":["das Handtuch"],"en":["towel"],"g":"n","tags":["object"],"parts":[{"surface":"hand","lemma":"hönd","de":"die Hand","en":"hand"},{"surface":"klæði","lemma":"klæði","de":"das Tuch","en":"cloth"}],"builds":[],"prod":0,"freq":2720,"d":["dagblað","tannbursti","borð","mynd","hurð","fótbolti","farsími","kaffibolli","flöskutappi","sjónvarp"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["hringlaga",null,null],"forms":{"kk":"hringlaga","kvk":"hringlaga","hk":"hringlaga"},"id":"hringlaga","de":["rund"],"en":["round"],"g":null,"tags":["object"],"parts":[{"surface":"hringl","lemma":null,"de":null,"en":null},{"surface":"aga","lemma":null,"de":null,"en":null}],"builds":[],"prod":0,"freq":7536,"d":["hreinn","þungur","langur","heitur","vondur","nýr","lítill","kaldur","harður","góður"],"note":"hringur (circle) + -laga (shaped). The ending -laga means shaped like; compare kringlóttur.","fam":[{"w":"hringur","p":"noun","de":"der Kreis","en":"circle","rel":"stem","mm":false,"base":null}],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"lögregla","de":["die Polizei"],"en":["police"],"g":"f","tags":["place"],"parts":[{"surface":"lög","lemma":"lög","de":"das Gesetz","en":"law"},{"surface":"regla","lemma":"regla","de":"die Regel","en":"rule"}],"builds":[],"prod":0,"freq":846479,"d":["gata","borg","veitingastaður","sundlaug","skóli","land","háskóli","bókabúð","sjúkrahús","vinnustaður"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"rauðrófa","de":["die Rote Bete"],"en":["beetroot"],"g":"f","tags":["food"],"parts":[{"surface":"rauð","lemma":"rauður","de":"rot","en":"red"},{"surface":"rófa","lemma":"rófa","de":"die Rübe","en":"root vegetable"}],"builds":[],"prod":0,"freq":140,"d":["brauð","mjólk","matur","kaffi","morgunmatur","hurð","gata","bílrúða","auga","vinna"],"note":"rauð- is the adjective rauður (red). rófa here is the root vegetable, NOT the homograph meaning tail.","fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"tannbursti","de":["die Zahnbürste"],"en":["toothbrush"],"g":"m","tags":["object"],"parts":[{"surface":"tann","lemma":"tönn","de":"der Zahn","en":"tooth"},{"surface":"bursti","lemma":"bursti","de":"die Bürste","en":"brush"}],"builds":[],"prod":0,"freq":681,"d":["snjóbolti","peningur","fótbolti","farsími","kaffibolli","gluggi","flöskutappi","handklæði","ísskápur","sími"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"morgunmatur","de":["das Frühstück"],"en":["breakfast"],"g":"m","tags":["food"],"parts":[{"surface":"morgun","lemma":"morgunn","de":"der Morgen","en":"morning"},{"surface":"matur","lemma":"matur","de":"das Essen","en":"food"}],"builds":[],"prod":0,"freq":2862,"d":["matur","brauð","rauðrófa","mjólk","kaffi","morgunn","munnur","vinnustaður","maður","hundur"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"barnabarn","de":["das Enkelkind"],"en":["grandchild"],"g":"n","tags":["people"],"parts":[{"surface":"barna","lemma":"barn","de":"das Kind","en":"child"},{"surface":"barn","lemma":"barn","de":"das Kind","en":"child"}],"builds":[],"prod":0,"freq":15360,"d":["barnabók","barn","bróðir","vinur","maður","kona","faðir","bílstjóri","systir","móðir"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"barnabók","de":["das Kinderbuch"],"en":["children's book"],"g":"f","tags":["object"],"parts":[{"surface":"barna","lemma":"barn","de":"das Kind","en":"child"},{"surface":"bók","lemma":"bók","de":"das Buch","en":"book"}],"builds":[],"prod":0,"freq":1765,"d":["barnabarn","bókabúð","bók","mynd","hurð","farsími","bókasafn","bílrúða","borð","lyklaborð"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"bílstjóri","de":["der Fahrer"],"en":["driver"],"g":"m","tags":["people"],"parts":[{"surface":"bíl","lemma":"bíll","de":"das Auto","en":"car"},{"surface":"stjóri","lemma":"stjóri","de":"der Leiter","en":"manager"}],"builds":[],"prod":0,"freq":7930,"d":["bílrúða","bróðir","systir","vinur","maður","faðir","barnabarn","barn","móðir","kona"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"bókabúð","de":["die Buchhandlung"],"en":["bookshop"],"g":"f","tags":["place"],"parts":[{"surface":"bóka","lemma":"bók","de":"das Buch","en":"book"},{"surface":"búð","lemma":"búð","de":"der Laden","en":"shop"}],"builds":[],"prod":0,"freq":1573,"d":["bókasafn","barnabók","sjúkrahús","gata","borg","veitingastaður","skóli","land","hús","eldhús"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"bókasafn","de":["die Bibliothek"],"en":["library"],"g":"n","tags":["place"],"parts":[{"surface":"bóka","lemma":"bók","de":"das Buch","en":"book"},{"surface":"safn","lemma":"safn","de":"die Sammlung","en":"collection"}],"builds":[],"prod":0,"freq":3091,"d":["bókabúð","land","hús","gata","barnabók","sjúkrahús","veitingastaður","vinnustaður","sundlaug","skóli"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"dagblað","de":["die Zeitung"],"en":["newspaper"],"g":"n","tags":["object"],"parts":[{"surface":"dag","lemma":"dagur","de":"der Tag","en":"day"},{"surface":"blað","lemma":"blað","de":"das Blatt","en":"sheet"}],"builds":[],"prod":0,"freq":37474,"d":["handklæði","borð","lyklaborð","kaffibolli","sjónvarp","fótbolti","snjóbolti","tannbursti","stóll","lykill"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["dökkblár","dökkblárri","dökkbláastur"],"forms":{"kk":"dökkblár","kvk":"dökkblá","hk":"dökkblátt"},"id":"dökkblár","de":["dunkelblau"],"en":["dark blue"],"g":null,"tags":["colour"],"parts":[{"surface":"dökk","lemma":"dökkur","de":"dunkel","en":"dark"},{"surface":"blár","lemma":"blár","de":"blau","en":"blue"}],"builds":[],"prod":0,"freq":583,"d":["dökkgrár","ljósblár","dökkrauður","fjólublár","dökkgrænn","blár","ljósgrár","gulur","grár","svartur"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["dökkgrár","dökkgrárri","dökkgráastur"],"forms":{"kk":"dökkgrár","kvk":"dökkgrá","hk":"dökkgrátt"},"id":"dökkgrár","de":["dunkelgrau"],"en":["dark grey"],"g":null,"tags":["colour"],"parts":[{"surface":"dökk","lemma":"dökkur","de":"dunkel","en":"dark"},{"surface":"grár","lemma":"grár","de":"grau","en":"grey"}],"builds":[],"prod":0,"freq":185,"d":["dökkblár","dökkgrænn","ljósgrár","dökkrauður","grár","ljósblár","blár","ljósgrænn","fjólublár","svartur"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["dökkgrænn","dökkgrænni","dökkgrænastur"],"forms":{"kk":"dökkgrænn","kvk":"dökkgræn","hk":"dökkgrænt"},"id":"dökkgrænn","de":["dunkelgrün"],"en":["dark green"],"g":null,"tags":["colour"],"parts":[{"surface":"dökk","lemma":"dökkur","de":"dunkel","en":"dark"},{"surface":"grænn","lemma":"grænn","de":"grün","en":"green"}],"builds":[],"prod":0,"freq":170,"d":["dökkgrár","ljósgrænn","dökkblár","dökkrauður","grænn","brúnn","ljósgrár","grár","svartur","rauður"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["dökkrauður","dökkrauðari","dökkrauðastur"],"forms":{"kk":"dökkrauður","kvk":"dökkrauð","hk":"dökkrautt"},"id":"dökkrauður","de":["dunkelrot"],"en":["dark red"],"g":null,"tags":["colour"],"parts":[{"surface":"dökk","lemma":"dökkur","de":"dunkel","en":"dark"},{"surface":"rauður","lemma":"rauður","de":"rot","en":"red"}],"builds":[],"prod":0,"freq":80,"d":["dökkgrár","dökkblár","dökkgrænn","rauður","svartur","gulur","hvítur","grár","bleikur","ljósgrár"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"eldhús","de":["die Küche"],"en":["kitchen"],"g":"n","tags":["place"],"parts":[{"surface":"eld","lemma":"eldur","de":"das Feuer","en":"fire"},{"surface":"hús","lemma":"hús","de":"das Haus","en":"house"}],"builds":[],"prod":0,"freq":19115,"d":["kaffihús","sjúkrahús","hús","land","veitingastaður","bókabúð","sundlaug","bókasafn","vinnustaður","skóli"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"farsími","de":["das Handy"],"en":["mobile phone"],"g":"m","tags":["object"],"parts":[{"surface":"far","lemma":"far","de":"die Spur","en":"mark"},{"surface":"sími","lemma":"sími","de":"das Telefon","en":"telephone"}],"builds":[],"prod":0,"freq":44488,"d":["sími","tannbursti","flöskutappi","fótbolti","kaffibolli","gluggi","bíll","barnabók","snjóbolti","handklæði"],"note":"far- here is the travel stem (för, fara), not far (a mark) — literally a journey-phone.","fam":[],"deriv":null},{"wc":"adj","deg":["fjólublár","fjólublárri","fjólubláastur"],"forms":{"kk":"fjólublár","kvk":"fjólublá","hk":"fjólublátt"},"id":"fjólublár","de":["violett"],"en":["purple"],"g":null,"tags":["colour"],"parts":[{"surface":"fjólu","lemma":"fjóla","de":"das Veilchen","en":"violet (flower)"},{"surface":"blár","lemma":"blár","de":"blau","en":"blue"}],"builds":[],"prod":0,"freq":1393,"d":["ljósblár","dökkblár","ljósgrár","blár","gulur","rauður","ljósgrænn","hvítur","grár","dökkgrár"],"note":"Literally violet-blue: fjóla is the flower (violet). Colours take fjólu-, ljós- and dökk- as first elements.","fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"flöskutappi","de":["der Flaschenverschluss"],"en":["bottle cap"],"g":"m","tags":["object"],"parts":[{"surface":"flösku","lemma":"flaska","de":"die Flasche","en":"bottle"},{"surface":"tappi","lemma":"tappi","de":"der Korken","en":"cap"}],"builds":[],"prod":0,"freq":0,"d":["ísskápur","gluggi","fótbolti","farsími","tannbursti","sími","stóll","lykill","snjóbolti","kaffibolli"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"fótbolti","de":["der Fußball"],"en":["football","soccer"],"g":"m","tags":["object"],"parts":[{"surface":"fót","lemma":"fótur","de":"der Fuß","en":"foot"},{"surface":"bolti","lemma":"bolti","de":"der Ball","en":"ball"}],"builds":[],"prod":0,"freq":131200,"d":["snjóbolti","kaffibolli","tannbursti","flöskutappi","stóll","farsími","bíll","sími","lykill","gluggi"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"hugmynd","de":["die Idee"],"en":["idea"],"g":"f","tags":["abstract"],"parts":[{"surface":"hug","lemma":"hugur","de":"der Sinn","en":"mind"},{"surface":"mynd","lemma":"mynd","de":"das Bild","en":"picture"}],"builds":[],"prod":0,"freq":226743,"d":["hugur","vinna","mynd","hönd","hurð","land","hundur","auga","kona","gata"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"háskóli","de":["die Universität"],"en":["university"],"g":"m","tags":["place"],"parts":[{"surface":"há","lemma":"hár","de":"hoch","en":"high"},{"surface":"skóli","lemma":"skóli","de":"die Schule","en":"school"}],"builds":[],"prod":0,"freq":80349,"d":["skóli","hús","vinnustaður","veitingastaður","lögregla","sjúkrahús","sundlaug","land","kaffihús","gata"],"note":"há- is the adjective hár (high), unrelated to the noun hár (hair).","fam":[],"deriv":null},{"wc":"adj","deg":["hávaxinn","hávaxnari","hávaxnastur"],"forms":{"kk":"hávaxinn","kvk":"hávaxin","hk":"hávaxið"},"id":"hávaxinn","de":["hochgewachsen"],"en":["tall"],"g":null,"tags":["people"],"parts":[{"surface":"há","lemma":"hár","de":"hoch","en":"high"},{"surface":"vaxinn","lemma":"vaxinn","de":"gewachsen","en":"grown"}],"builds":[],"prod":0,"freq":2911,"d":["lágvaxinn","fyndinn","gáfaður","vondur","latur","kurteis","grannur","glaður","gamall","vingjarnlegur"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"kaffibolli","de":["die Kaffeetasse"],"en":["coffee cup"],"g":"m","tags":["object"],"parts":[{"surface":"kaffi","lemma":"kaffi","de":"der Kaffee","en":"coffee"},{"surface":"bolli","lemma":"bolli","de":"die Tasse","en":"cup"}],"builds":[],"prod":0,"freq":5097,"d":["kaffihús","fótbolti","snjóbolti","lykill","bíll","tannbursti","stóll","farsími","dagblað","sími"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"kaffihús","de":["das Café"],"en":["café"],"g":"n","tags":["place"],"parts":[{"surface":"kaffi","lemma":"kaffi","de":"der Kaffee","en":"coffee"},{"surface":"hús","lemma":"hús","de":"das Haus","en":"house"}],"builds":[],"prod":0,"freq":10118,"d":["eldhús","sjúkrahús","kaffibolli","hús","land","veitingastaður","skóli","kaffi","gata","bókasafn"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["ljósblár","ljósblárri","ljósbláastur"],"forms":{"kk":"ljósblár","kvk":"ljósblá","hk":"ljósblátt"},"id":"ljósblár","de":["hellblau"],"en":["light blue"],"g":null,"tags":["colour"],"parts":[{"surface":"ljós","lemma":"ljós","de":"hell","en":"light-coloured"},{"surface":"blár","lemma":"blár","de":"blau","en":"blue"}],"builds":[],"prod":0,"freq":235,"d":["ljósgrár","fjólublár","dökkblár","ljósgrænn","blár","gulur","grár","dökkgrár","svartur","rauður"],"note":"ljós- (light) and dökk- (dark) combine with any colour.","fam":[],"deriv":null},{"wc":"adj","deg":["ljósgrár","ljósgrárri","ljósgráastur"],"forms":{"kk":"ljósgrár","kvk":"ljósgrá","hk":"ljósgrátt"},"id":"ljósgrár","de":["hellgrau"],"en":["light grey"],"g":null,"tags":["colour"],"parts":[{"surface":"ljós","lemma":"ljós","de":"hell","en":"light-coloured"},{"surface":"grár","lemma":"grár","de":"grau","en":"grey"}],"builds":[],"prod":0,"freq":396,"d":["ljósblár","ljósgrænn","dökkgrár","grár","fjólublár","dökkblár","blár","dökkgrænn","svartur","rauður"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["ljósgrænn","ljósgrænni","ljósgrænastur"],"forms":{"kk":"ljósgrænn","kvk":"ljósgræn","hk":"ljósgrænt"},"id":"ljósgrænn","de":["hellgrün"],"en":["light green"],"g":null,"tags":["colour"],"parts":[{"surface":"ljós","lemma":"ljós","de":"hell","en":"light-coloured"},{"surface":"grænn","lemma":"grænn","de":"grün","en":"green"}],"builds":[],"prod":0,"freq":9,"d":["ljósgrár","dökkgrænn","ljósblár","grænn","brúnn","grár","fjólublár","dökkgrár","svartur","rauður"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"lyklaborð","de":["die Tastatur"],"en":["keyboard"],"g":"n","tags":["object"],"parts":[{"surface":"lykla","lemma":"lykill","de":"der Schlüssel","en":"key"},{"surface":"borð","lemma":"borð","de":"der Tisch","en":"table"}],"builds":[],"prod":0,"freq":826,"d":["borð","dagblað","lykill","sjónvarp","hurð","barnabók","kaffibolli","flöskutappi","handklæði","ísskápur"],"note":null,"fam":[],"deriv":null},{"wc":"adj","deg":["lágvaxinn","lágvaxnari","lágvaxnastur"],"forms":{"kk":"lágvaxinn","kvk":"lágvaxin","hk":"lágvaxið"},"id":"lágvaxinn","de":["kleinwüchsig"],"en":["short in stature"],"g":null,"tags":["people"],"parts":[{"surface":"lág","lemma":"lágur","de":"niedrig","en":"low"},{"surface":"vaxinn","lemma":"vaxinn","de":"gewachsen","en":"grown"}],"builds":[],"prod":0,"freq":669,"d":["hávaxinn","fyndinn","latur","gáfaður","grannur","glaður","gamall","vingjarnlegur","vondur","ungur"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"sjónvarp","de":["der Fernseher"],"en":["television"],"g":"n","tags":["object"],"parts":[{"surface":"sjón","lemma":"sjón","de":"das Sehen","en":"sight"},{"surface":"varp","lemma":"varp","de":"die Sendung","en":"broadcast"}],"builds":[],"prod":0,"freq":36948,"d":["snjóbolti","stóll","dagblað","borð","lyklaborð","tannbursti","flöskutappi","ísskápur","sími","peningur"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"sjúkrahús","de":["das Krankenhaus"],"en":["hospital"],"g":"n","tags":["place"],"parts":[{"surface":"sjúkra","lemma":"sjúkur","de":"krank","en":"sick"},{"surface":"hús","lemma":"hús","de":"das Haus","en":"house"}],"builds":[],"prod":0,"freq":154662,"d":["kaffihús","eldhús","hús","bókabúð","land","bókasafn","sundlaug","skóli","lögregla","háskóli"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"snjóbolti","de":["der Schneeball"],"en":["snowball"],"g":"m","tags":["object"],"parts":[{"surface":"snjó","lemma":"snjór","de":"der Schnee","en":"snow"},{"surface":"bolti","lemma":"bolti","de":"der Ball","en":"ball"}],"builds":[],"prod":0,"freq":206,"d":["fótbolti","kaffibolli","stóll","tannbursti","sími","bíll","sjónvarp","lykill","gluggi","farsími"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"sundlaug","de":["das Schwimmbad"],"en":["swimming pool"],"g":"f","tags":["place"],"parts":[{"surface":"sund","lemma":"sund","de":"das Schwimmen","en":"swimming"},{"surface":"laug","lemma":"laug","de":"das Bad","en":"pool"}],"builds":[],"prod":0,"freq":8943,"d":["vinnustaður","skóli","land","gata","borg","sjúkrahús","veitingastaður","lögregla","eldhús","bókasafn"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"veitingastaður","de":["das Restaurant"],"en":["restaurant"],"g":"m","tags":["place"],"parts":[{"surface":"veitinga","lemma":"veiting","de":"die Bewirtung","en":"serving of food"},{"surface":"staður","lemma":"staður","de":"der Ort","en":"place"}],"builds":[],"prod":0,"freq":25289,"d":["vinnustaður","gata","sundlaug","bókasafn","skóli","háskóli","lögregla","kaffihús","eldhús","bókabúð"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"vinnustaður","de":["der Arbeitsplatz"],"en":["workplace"],"g":"m","tags":["place"],"parts":[{"surface":"vinnu","lemma":"vinna","de":"die Arbeit","en":"work"},{"surface":"staður","lemma":"staður","de":"der Ort","en":"place"}],"builds":[],"prod":0,"freq":25049,"d":["veitingastaður","sundlaug","skóli","háskóli","gata","bókasafn","sjúkrahús","lögregla","land","hús"],"note":null,"fam":[],"deriv":null},{"wc":"noun","deg":null,"forms":null,"id":"ísskápur","de":["der Kühlschrank"],"en":["fridge"],"g":"m","tags":["object"],"parts":[{"surface":"ís","lemma":"ís","de":"das Eis","en":"ice"},{"surface":"skápur","lemma":"skápur","de":"der Schrank","en":"cupboard"}],"builds":[],"prod":0,"freq":4157,"d":["flöskutappi","peningur","sími","stóll","lykill","tannbursti","snjóbolti","sjónvarp","kaffibolli","hurð"],"note":null,"fam":[],"deriv":null}],"support":{"rófa":{"de":"die Rübe","en":"root vegetable","prod":1,"builds":["rauðrófa"]},"rúða":{"de":"die Scheibe","en":"pane","prod":1,"builds":["bílrúða"]},"fjóla":{"de":"das Veilchen","en":"violet (flower)","prod":1,"builds":["fjólublár"]},"hringur":{"de":"der Kreis","en":"circle","prod":0,"builds":[]},"regla":{"de":"die Regel","en":"rule","prod":1,"builds":["lögregla"]},"ís":{"de":"das Eis","en":"ice","prod":1,"builds":["ísskápur"]},"blað":{"de":"das Blatt","en":"sheet","prod":1,"builds":["dagblað"]},"bolli":{"de":"die Tasse","en":"cup","prod":1,"builds":["kaffibolli"]},"bolti":{"de":"der Ball","en":"ball","prod":2,"builds":["fótbolti","snjóbolti"]},"bursti":{"de":"die Bürste","en":"brush","prod":1,"builds":["tannbursti"]},"búð":{"de":"der Laden","en":"shop","prod":1,"builds":["bókabúð"]},"dökkur":{"de":"dunkel","en":"dark","prod":4,"builds":["dökkblár","dökkgrár","dökkgrænn","dökkrauður"]},"eldur":{"de":"das Feuer","en":"fire","prod":1,"builds":["eldhús"]},"far":{"de":"die Spur","en":"mark","prod":1,"builds":["farsími"]},"flaska":{"de":"die Flasche","en":"bottle","prod":1,"builds":["flöskutappi"]},"för":{"de":"die Fahrt","en":"journey","prod":0,"builds":[]},"gjarn":{"de":"geneigt","en":"inclined to","prod":0,"builds":[]},"hár":{"de":"hoch","en":"high","prod":2,"builds":["háskóli","hávaxinn"]},"klæði":{"de":"das Tuch","en":"cloth","prod":1,"builds":["handklæði"]},"lag":{"de":"das Lied","en":"song","prod":0,"builds":[]},"laug":{"de":"das Bad","en":"pool","prod":1,"builds":["sundlaug"]},"ljós":{"de":"hell","en":"light-coloured","prod":3,"builds":["ljósblár","ljósgrár","ljósgrænn"]},"lágur":{"de":"niedrig","en":"low","prod":1,"builds":["lágvaxinn"]},"lög":{"de":"das Gesetz","en":"law","prod":1,"builds":["lögregla"]},"safn":{"de":"die Sammlung","en":"collection","prod":1,"builds":["bókasafn"]},"sjón":{"de":"das Sehen","en":"sight","prod":1,"builds":["sjónvarp"]},"sjúkur":{"de":"krank","en":"sick","prod":1,"builds":["sjúkrahús"]},"skápur":{"de":"der Schrank","en":"cupboard","prod":1,"builds":["ísskápur"]},"staður":{"de":"der Ort","en":"place","prod":2,"builds":["veitingastaður","vinnustaður"]},"stjóri":{"de":"der Leiter","en":"manager","prod":1,"builds":["bílstjóri"]},"sund":{"de":"das Schwimmen","en":"swimming","prod":1,"builds":["sundlaug"]},"tappi":{"de":"der Korken","en":"cap","prod":1,"builds":["flöskutappi"]},"tönn":{"de":"der Zahn","en":"tooth","prod":1,"builds":["tannbursti"]},"varp":{"de":"die Sendung","en":"broadcast","prod":1,"builds":["sjónvarp"]},"vaxinn":{"de":"gewachsen","en":"grown","prod":2,"builds":["hávaxinn","lágvaxinn"]},"veiting":{"de":"die Bewirtung","en":"serving of food","prod":1,"builds":["veitingastaður"]}},"demo":{"m":[{"w":"peningur","de":"das Geld","en":"money"},{"w":"snjór","de":"der Schnee","en":"snow"},{"w":"stóll","de":"der Stuhl","en":"chair"},{"w":"matur","de":"das Essen","en":"food"},{"w":"bíll","de":"das Auto","en":"car"},{"w":"gluggi","de":"das Fenster","en":"window"},{"w":"hundur","de":"der Hund","en":"dog"},{"w":"köttur","de":"die Katze","en":"cat"},{"w":"lykill","de":"der Schlüssel","en":"key"},{"w":"skóli","de":"die Schule","en":"school"},{"w":"sími","de":"das Telefon","en":"telephone"},{"w":"vindur","de":"der Wind","en":"wind"}],"f":[{"w":"hurð","de":"die Tür","en":"door"},{"w":"mjólk","de":"die Milch","en":"milk"},{"w":"borg","de":"die Stadt","en":"city"},{"w":"bók","de":"das Buch","en":"book"},{"w":"gata","de":"die Straße","en":"street"},{"w":"mynd","de":"das Bild","en":"picture"}],"n":[{"w":"kaffi","de":"der Kaffee","en":"coffee"},{"w":"borð","de":"der Tisch","en":"table"},{"w":"brauð","de":"das Brot","en":"bread"},{"w":"fjall","de":"der Berg","en":"mountain"},{"w":"hús","de":"das Haus","en":"house"},{"w":"land","de":"das Land","en":"country"},{"w":"vatn","de":"das Wasser","en":"water"},{"w":"veður","de":"das Wetter","en":"weather"}]}};
+const W=DATA.words, SUP=DATA.support, DEMO=DATA.demo;
+const GENDER_NAME={m:['karlkyn','masculine','maskulin'],
+                   f:['kvenkyn','feminine','feminin'],
+                   n:['hvorugkyn','neuter','neutrum']};
+const DEGREE_NAME={0:['frumstig','positive','Grundstufe'],
+                   1:['miðstig','comparative','Komparativ'],
+                   2:['efsta stig','superlative','Superlativ']};
+const gname=g=>GENDER_NAME[g][0]+' — '+(P.lang==='de'?GENDER_NAME[g][2]:GENDER_NAME[g][1]);
+const dname=i=>DEGREE_NAME[i][0]+' · '+(P.lang==='de'?DEGREE_NAME[i][2]:DEGREE_NAME[i][1]);
+const pickDemo=g=>{const a=DEMO[g]||[];return a.length?a[Math.floor(Math.random()*a.length)]:null;};
+const byId={}; W.forEach(w=>byId[w.id]=w);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- progress ---------- */
+const KEY='ordaleikur.v1';
+let P={lang:'de', intro:false, s:{}};        // s[id] = {n: seen, k: correct streak, str: 0..5}
+try{ const raw=localStorage.getItem(KEY); if(raw) P=Object.assign(P,JSON.parse(raw)); }catch(e){}
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(P)); }catch(e){} }
+const st=id=>P.s[id]||(P.s[id]={n:0,k:0,str:0});
+const strength=id=>(P.s[id]||{}).str||0;
+const known=id=>strength(id)>=3;          // recognised well enough to be used as a hint
+const learnt=id=>strength(id)>=5;
+const gloss=w=>(P.lang==='de'?w.de:w.en)[0];
+const glossOf=id=>byId[id]?gloss(byId[id]):(SUP[id]?SUP[id][P.lang]:id);
+
+/* A compound part counts as known if it is a deck word the player has learnt,
+   or a support word whose meaning we can simply show. */
+function partKnown(p){ return p.lemma && (byId[p.lemma] ? known(p.lemma) : true); }
+
+/* ---------- lanes ---------- */
+const THEMES=[
+ {id:'nouns', name:'Nouns', sub:'Vocabulary · Nouns', pick:w=>w.wc!=='adj', lanes:[
+  {id:'blocks', name:'Building blocks', ico:'⬡',
+   desc:'The stems that combine into the most other words. Learn these first.',
+   pick:w=>w.prod>0 && !w.parts.length,
+   sort:(a,b)=>b.prod-a.prod||b.freq-a.freq},
+  {id:'core', name:'Core nouns', ico:'●',
+   desc:'Single words, most common first.',
+   pick:w=>!w.parts.length, sort:(a,b)=>b.freq-a.freq},
+  {id:'compound', name:'Compound words', ico:'⬢',
+   desc:'Words built from two others. Every answer shows the pieces.',
+   pick:w=>w.parts.length>0, sort:(a,b)=>b.freq-a.freq},
+  {id:'all', name:'Everything', ico:'◆',
+   desc:'All nouns mixed together.', pick:()=>true, sort:(a,b)=>b.freq-a.freq},
+ ]},
+ {id:'adj', name:'Adjectives', sub:'Vocabulary · Adjectives', pick:w=>w.wc==='adj', lanes:[
+  {id:'colour', name:'Colours', ico:'◐',
+   desc:'Basic colours, plus ljós- and dökk- to shade them.',
+   pick:w=>w.tags.includes('colour'), sort:(a,b)=>b.freq-a.freq},
+  {id:'people', name:'Describing people', ico:'☺',
+   desc:'Funny, lazy, tall, kind.',
+   pick:w=>w.tags.includes('people'), sort:(a,b)=>b.freq-a.freq},
+  {id:'object', name:'Describing things', ico:'▣',
+   desc:'Big, heavy, soft, cheap.',
+   pick:w=>w.tags.includes('object'), sort:(a,b)=>b.freq-a.freq},
+  {id:'feeling', name:'How you feel', ico:'♨',
+   desc:'Hungry, tired, thirsty, nervous.',
+   pick:w=>w.tags.includes('feeling'), sort:(a,b)=>b.freq-a.freq},
+  {id:'adjall', name:'Everything', ico:'◆',
+   desc:'All adjectives mixed together.', pick:()=>true, sort:(a,b)=>b.freq-a.freq},
+ ]},
+];
+let theme=THEMES[0];
+const pool=l=>W.filter(theme.pick).filter(l.pick).sort(l.sort);
+
+/* ---------- state ---------- */
+let view='menu', lane=null, queue=[], q=null, answered=false, chosen=null, last=null;
+let session={asked:0, right:0, newly:[]};
+
+function setBar(p){ $('bar').style.width=(p*100)+'%'; }
+function pill(){
+  const l=W.filter(w=>learnt(w.id)).length;
+  $('pill').innerHTML=view==='play'
+    ? `${session.right}/${session.asked} · <b>${l}</b> learnt`
+    : `<b>${l}</b> / ${W.length} learnt`;
+}
+
+/* ---------- menu ---------- */
+function drawMenu(){
+  view='menu'; lane=null; $('back').hidden=true; setBar(0);
+  const blocks=THEMES.map(th=>{
+    const prev=theme; theme=th;
+    const rows=th.lanes.map(l=>{
+      const p=pool(l), done=p.filter(w=>learnt(w.id)).length;
+      return `<button class="lane" data-theme="${th.id}" data-lane="${l.id}">
+        <span class="ico">${l.ico}</span>
+        <span class="t"><b>${esc(l.name)}</b><span>${esc(l.desc)}</span></span>
+        <span class="n">${done}/${p.length}</span></button>`;
+    }).join('');
+    theme=prev;
+    return `<div class="section">${esc(th.sub)}</div><div class="lanes">${rows}</div>`;
+  }).join('');
+  $('app').innerHTML=`<h1>Orðaleikur</h1>
+    <p class="sub">Icelandic words. Pick the meaning — and when a word is built
+    from smaller ones, see exactly which.</p>
+    ${blocks}
+    <div class="section">Later</div>
+    <div class="lanes">
+      <div class="lane locked"><span class="ico">◇</span>
+        <span class="t"><b>Verbs</b><span>Not built yet</span></span></div>
+      <div class="lane locked"><span class="ico">◇</span>
+        <span class="t"><b>Everyday phrases</b><span>Ordering, feelings, describing things</span></span></div>
+    </div>`;
+  $('app').querySelectorAll('[data-lane]').forEach(b=>b.onclick=()=>{
+    theme=THEMES.find(t=>t.id===b.dataset.theme);
+    start(theme.lanes.find(l=>l.id===b.dataset.lane));
+  });
+  pill();
+}
+
+/* ---------- session ---------- */
+function introHTML(){
+  return `<div class="intro"><h2>How Icelandic adjectives work</h2>
+    <p>An adjective changes shape to match the noun it describes. There are
+    three genders, and each takes a different ending.</p>
+    <div class="box"><div class="rt">the same adjective, three genders</div>
+      <div class="agree">
+        <div class="arow m"><span class="phrase"><b>rauður</b> bíll</span>
+          <span class="gl">${esc(gname('m'))}</span><span class="mean">a red car</span></div>
+        <div class="arow f"><span class="phrase"><b>rauð</b> rós</span>
+          <span class="gl">${esc(gname('f'))}</span><span class="mean">a red rose</span></div>
+        <div class="arow n"><span class="phrase"><b>rautt</b> hús</span>
+          <span class="gl">${esc(gname('n'))}</span><span class="mean">a red house</span></div>
+      </div></div>
+    <p>Adjectives also come in three degrees, the same as English big / bigger / biggest.</p>
+    <div class="box"><div class="rt">three degrees</div><div class="degrow">
+      <div class="d"><b>gulur</b><span>${esc(dname(0))} — yellow</span></div>
+      <div class="d mid"><b>gulari</b><span>${esc(dname(1))} — more yellow</span></div>
+      <div class="d sup"><b>gulastur</b><span>${esc(dname(2))} — most yellow</span></div>
+    </div></div>
+    <p>You only have to recognise the meaning here. The forms are shown after
+    each answer so they sink in on their own.</p>
+    <button class="next" id="gotit">Start</button></div>`;
+}
+
+function start(l){
+  lane=l; view='play'; $('back').hidden=false;
+  if(theme.id==='adj' && !P.intro){
+    $('app').innerHTML=introHTML();
+    $('gotit').onclick=()=>{ P.intro=true; save(); start(l); };
+    setBar(0); return;
+  }
+  session={asked:0,right:0,newly:[]};
+  const p=pool(l);
+  // Weakest and least-seen first, but never the same word twice running.
+  queue=p.slice().sort((a,b)=>strength(a.id)-strength(b.id)||st(a.id).n-st(b.id).n)
+        .slice(0,12);
+  next();
+}
+
+function pickDistractors(w,n){
+  const cand=w.d.filter(id=>byId[id]);
+  const hard=strength(w.id)>=2;               // ramp difficulty with familiarity
+  const band=hard?cand.slice(0,6):cand.slice(3,10);
+  const src=(band.length>=n?band:cand).slice();
+  const out=[];
+  while(out.length<n && src.length) out.push(src.splice(Math.floor(Math.random()*src.length),1)[0]);
+  let i=0;
+  while(out.length<n && i<W.length){ const c=W[i++]; if(c.id!==w.id&&!out.includes(c.id)) out.push(c.id); }
+  return out;
+}
+
+function next(){
+  if(!queue.length) return summary();
+  let w=queue.shift();
+  if(w.id===last && queue.length){ queue.push(w); w=queue.shift(); }
+  last=w.id;
+  const opts=[w.id,...pickDistractors(w,3)];
+  for(let i=opts.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[opts[i],opts[j]]=[opts[j],opts[i]];}
+  q={w,opts,demo:{m:pickDemo('m'),f:pickDemo('f'),n:pickDemo('n')}};
+  answered=false; chosen=null;
+  drawQ();
+}
+
+function wordHTML(w){
+  if(!w.parts.length) return `<span class="seg plain">${esc(w.id)}</span>`;
+  const show=answered || w.parts.every(partKnown);
+  if(!show) return `<span class="seg plain">${esc(w.id)}</span>`;
+  return w.parts.map((p,n)=>(n?'<span class="seam"></span>':'')+
+    `<span class="seg p${n%3}">${esc(p.surface)}</span>`).join('');
+}
+
+function drawQ(){
+  const {w,opts}=q;
+  const hint=!answered && w.parts.length && w.parts.every(partKnown)
+    ? 'built from words you know' : '';
+  $('app').innerHTML=`<div class="qword">${wordHTML(w)}</div>
+    <div class="qhint">${hint}</div>
+    <div class="opts">${opts.map(id=>
+      `<button class="opt" data-id="${esc(id)}"><span class="lbl">${esc(glossOf(id))}</span>
+       <span class="tag"></span></button>`).join('')}</div>
+    <div id="after"></div>`;
+  if(answered) paintAnswered();
+  else $('app').querySelectorAll('.opt').forEach(b=>b.onclick=()=>answer(b.dataset.id));
+  setBar(session.asked/(session.asked+queue.length+1));
+  pill();
+}
+
+function paintAnswered(){
+  const {w}=q;
+  $('app').querySelectorAll('.opt').forEach(b=>{
+    b.disabled=true; b.onclick=null;
+    b.classList.remove('right','wrong','faded');
+    if(b.dataset.id===w.id){ b.classList.add('right'); b.querySelector('.tag').textContent=w.id; }
+    else if(b.dataset.id===chosen){ b.classList.add('wrong');
+      // Show what they actually picked, in Icelandic — a free second word.
+      b.querySelector('.tag').textContent=b.dataset.id; }
+    else { b.classList.add('faded');
+      // Show the Icelandic for every option, so a round teaches four words.
+      b.querySelector('.tag').textContent=b.dataset.id; }
+  });
+  $('app').querySelector('.qword').innerHTML=wordHTML(w);
+  $('app').querySelector('.qhint').textContent='';
+  $('after').innerHTML=breakdown(w)+`<button class="next" id="nx">Next</button>`;
+  $('nx').onclick=next;
+}
+
+function answer(id){
+  if(answered) return;
+  answered=true; chosen=id;
+  const {w}=q, right=id===w.id, s=st(w.id);
+  s.n++;
+  if(right){ s.k++; s.str=Math.min(5,s.str+1); session.right++; if(s.str===5) session.newly.push(w.id); }
+  else{ s.k=0; s.str=Math.max(0,s.str-1); queue.push(w); }
+  session.asked++; save();
+
+  paintAnswered();
+  pill();
+}
+
+function breakdown(w){
+  let html='';
+  if(w.wc==='adj'&&w.forms){
+    const rows=[['m','kk'],['f','kvk'],['n','hk']].map(([g,k])=>{
+      const n=q&&q.demo?q.demo[g]:pickDemo(g);
+      const form=w.forms[k]||'—';
+      return `<div class="arow ${g}">
+        <span class="phrase"><b>${esc(form)}</b>${n?' '+esc(n.w):''}</span>
+        <span class="gl">${esc(gname(g))}</span>
+        ${n?`<span class="mean">${esc(P.lang==='de'?n.de:n.en)}</span>`:''}</div>`;
+    }).join('');
+    html+=`<div class="reveal"><div class="rt">agrees with the noun</div>
+      <div class="agree">${rows}</div>
+      ${w.deg&&w.deg[1]?`<div class="litc"><div class="degrow">
+        ${[0,1,2].map(i=>`<div class="d ${i===1?'mid':i===2?'sup':''}">
+          <b>${esc(w.deg[i]||'—')}</b><span>${esc(dname(i))}</span></div>`).join('')}
+      </div></div>`:''}
+      ${w.note?`<div class="note">${esc(w.note)}</div>`:''}</div>`;
+  }
+  if(w.parts.length){
+    const pieces=w.parts.map((p,n)=>{
+      const kn=p.lemma&&byId[p.lemma]&&known(p.lemma);
+      const meaning=p[P.lang]||'';
+      return `<div class="piece p${n%3}"><span class="w">${esc(p.lemma||p.surface)}</span>
+        <span class="m">${esc(meaning)}</span>
+        ${kn?'<span class="known">known</span>':''}</div>`;
+    }).join('');
+    const lit=w.parts.map(p=>p[P.lang]||p.surface).join(' + ');
+    html+=`<div class="reveal"><div class="rt">built from</div>
+      <div class="pieces">${pieces}</div>
+      <div class="litc">literally <b>${esc(lit)}</b> — ${esc(gloss(w))}</div>
+      ${w.wc!=='adj'&&w.note?`<div class="note">${esc(w.note)}</div>`:''}</div>`;
+  }
+  if(w.fam&&w.fam.length){
+    html+=`<div class="reveal"><div class="rt">same family</div>
+      ${w.fam.map(f=>`<div class="famrow ${esc(f.rel)}">
+        <span class="fw">${esc(f.w)}</span><span class="fp">${esc(f.p)}</span>
+        <span class="fm">${esc(P.lang==='de'?f.de:f.en)}</span></div>`).join('')}
+      ${w.deriv?`<div class="deriv"><b>-${esc(w.deriv.suffix)}</b> ${esc(w.deriv.note)}</div>`:''}</div>`;
+  }
+  if(!w.parts.length&&!(w.fam&&w.fam.length)&&w.builds.length){
+    html+=`<div class="reveal"><div class="rt">this word builds</div>
+      <div class="builds">${w.builds.map(b=>
+        `<b>${esc(b)}</b> ${esc(byId[b]?gloss(byId[b]):'')}`).join('<br>')}</div></div>`;
+  }
+  return html;
+}
+
+function summary(){
+  view='summary'; setBar(1);
+  const nw=session.newly;
+  $('app').innerHTML=`<div class="sum"><h2>Vel gert</h2>
+    <p>${nw.length?`${nw.length} new word${nw.length>1?'s':''} learnt: ${nw.map(esc).join(', ')}`:'Keep going — repetition is doing the work.'}</p>
+    <div class="stats"><div class="ok"><b>${session.right}</b>correct</div>
+      <div><b>${session.asked}</b>answered</div></div>
+    <div class="row"><button id="again">Another round</button>
+      <button id="menu">Back to menu</button>
+      <button id="exp">Save / load progress</button></div>
+    <div id="iobox"></div></div>`;
+  $('again').onclick=()=>start(lane);
+  $('menu').onclick=drawMenu;
+  $('exp').onclick=io;
+  pill();
+}
+
+function io(){
+  $('iobox').innerHTML=`<textarea class="io" id="iot" spellcheck="false"></textarea>
+    <div class="row" style="margin-top:8px"><button id="ld">Load from box</button></div>
+    <div class="tiny">Copy this to move progress to another device, or paste some in and load it.</div>`;
+  $('iot').value=JSON.stringify(P);
+  $('ld').onclick=()=>{
+    try{ const v=JSON.parse($('iot').value);
+      if(v&&v.s){ P=Object.assign({lang:'de',s:{}},v); save(); drawMenu(); } }
+    catch(e){ $('iot').value='could not read that — expected the JSON from this box'; }
+  };
+}
+
+$('back').onclick=drawMenu;
+$('lang').onclick=()=>{ P.lang=P.lang==='de'?'en':'de'; save();
+  $('lang').innerHTML='glosses <b>'+P.lang.toUpperCase()+'</b>';
+  if(view==='menu')drawMenu(); else if(view==='play')drawQ(); else summary(); };
+$('reset').onclick=()=>{ if(confirm('Erase all progress?')){ P={lang:P.lang,intro:P.intro,s:{}}; save(); drawMenu(); } };
+$('lang').innerHTML='glosses <b>'+P.lang.toUpperCase()+'</b>';
+drawMenu();
+</script>
+</body>
+</html>
