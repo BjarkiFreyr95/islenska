@@ -1,39 +1,32 @@
-# Publishing the game
+# Publishing an update
 
-`game.html` is one self-contained file. Nothing to install, no server, no accounts.
+`game.html` is one self-contained file. No install, no server, no accounts.
 
-## GitHub Pages (recommended)
+## Updating an existing GitHub Pages site
 
-1. Sign in at github.com and click **New repository**.
-   Name it e.g. `islenska`, set it **Public**, tick **Add a README file**, click Create.
-2. On the repo page click **Add file → Upload files**.
-   Drag in `game.html`. Rename it to `index.html` first — Pages serves that
-   automatically, so the link has no filename in it.
-   Click **Commit changes**.
-3. Go to **Settings → Pages** (left sidebar).
-   Under *Build and deployment* → *Source*, choose **Deploy from a branch**.
-   Branch: **main**, folder: **/ (root)**. Click **Save**.
-4. Wait about a minute, then reload the Settings → Pages screen. It shows:
-   `https://<your-username>.github.io/islenska/`
-   That is the link you send. It works on any phone or desktop browser.
+1. Open your repo → click `index.html` → the pencil icon isn't needed:
+   use **Add file → Upload files** and drop in the new `game.html`,
+   renamed to `index.html`. It overwrites the old one.
+2. **Commit changes.** Pages redeploys in about a minute. Same link.
 
-To update later: upload a new `index.html` over the old one. The link stays the same.
+Existing progress survives: it is keyed per browser and the word ids have not
+changed, so anything already learnt stays learnt.
 
-## Telling your friend
+## First-time setup
 
-- Open the link, then **Add to Home Screen** (Share menu on iPhone,
-  ⋮ menu on Android). It then opens like an app and works offline.
-- Progress is stored in their own browser. There is no login and nothing is
-  sent anywhere.
-- Clearing browser data erases progress. **Save / load progress** on the
-  summary screen gives copyable text as a backup.
+1. New **public** repo on github.com (e.g. `islenska`), tick "Add a README file".
+2. **Add file → Upload files** → drag in `game.html`, **rename it `index.html`**, commit.
+3. **Settings → Pages** → Source: *Deploy from a branch* → branch `main`,
+   folder `/ (root)` → Save.
+4. Wait ~1 min, reload. Your link: `https://<username>.github.io/islenska/`
 
-## Alternatives
+If the deploy fails with a 503, check githubstatus.com and re-run the job later.
 
-- **Email the file.** Attach `game.html`; they open it and it just works.
-  No hosting at all. Downside: no easy way to send updates.
-- **Netlify Drop** (app.netlify.com/drop). Drag the folder onto the page and
-  get a link in seconds. You need an account to keep the link permanently.
+## For your friend
+
+- Open the link, then **Add to Home Screen**. It runs offline afterwards.
+- Progress lives in their browser. No login, nothing sent anywhere.
+- **Save / load progress** on the summary screen gives copyable text as a backup.
 
 ## Rebuilding after editing words
 
@@ -41,4 +34,11 @@ To update later: upload a new `index.html` over the old one. The link stays the 
     cd source
     python build.py && python make_game.py && python make_review.py
 
-Edit only the TSVs in `source/data/`. Everything else regenerates.
+Edit only the TSVs in `source/data/`:
+
+| file | what it holds |
+|---|---|
+| `words.tsv` | nouns |
+| `adjectives.tsv` | adjectives |
+| `pool.tsv` | words that only appear inside compounds |
+| `family.tsv` | related words: adjective -> noun/verb |
