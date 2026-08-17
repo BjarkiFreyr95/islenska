@@ -1,44 +1,45 @@
-# Publishing an update
+# Publishing
 
-`game.html` is one self-contained file. No install, no server, no accounts.
-
-## Updating an existing GitHub Pages site
-
-1. Open your repo → click `index.html` → the pencil icon isn't needed:
-   use **Add file → Upload files** and drop in the new `game.html`,
-   renamed to `index.html`. It overwrites the old one.
-2. **Commit changes.** Pages redeploys in about a minute. Same link.
-
-Existing progress survives: it is keyed per browser and the word ids have not
-changed, so anything already learnt stays learnt.
+`index.html` is the whole game in one file. No build step on GitHub's side.
 
 ## First-time setup
 
-1. New **public** repo on github.com (e.g. `islenska`), tick "Add a README file".
-2. **Add file → Upload files** → drag in `game.html`, **rename it `index.html`**, commit.
-3. **Settings → Pages** → Source: *Deploy from a branch* → branch `main`,
-   folder `/ (root)` → Save.
-4. Wait ~1 min, reload. Your link: `https://<username>.github.io/islenska/`
+1. Create a **public** repo on github.com (e.g. `islenska`).
+2. **Add file → Upload files** → drag in *everything from this zip*, including
+   the `source` folder. Commit.
+3. **Settings → Pages** → Source: *Deploy from a branch* →
+   branch `main`, folder `/ (root)` → **Save**.
+4. Wait about a minute, reload that page. It shows your link:
+   `https://<username>.github.io/<repo>/`
 
-If the deploy fails with a 503, check githubstatus.com and re-run the job later.
+## Updating later
 
-## For your friend
+Upload a new `index.html` over the old one and commit. Pages redeploys in about
+a minute and the link stays the same.
 
-- Open the link, then **Add to Home Screen**. It runs offline afterwards.
-- Progress lives in their browser. No login, nothing sent anywhere.
-- **Save / load progress** on the summary screen gives copyable text as a backup.
+Progress survives updates. It is stored per browser and keyed by word id, so
+anything already learnt stays learnt as long as you do not rename words.
 
-## Rebuilding after editing words
+If a deploy fails with a 503, that is GitHub, not you — check githubstatus.com
+and re-run the job from the Actions tab later.
 
-    pip install -r source/requirements.txt
-    cd source
-    python build.py && python make_game.py && python make_review.py
+## Sharing with someone
 
-Edit only the TSVs in `source/data/`:
+- Send the link. Opening it is enough; there is nothing to install.
+- On a phone: **Add to Home Screen**. It then opens like an app and works
+  offline.
+- No account, no signup, nothing leaves their device.
 
-| file | what it holds |
-|---|---|
-| `words.tsv` | nouns |
-| `adjectives.tsv` | adjectives |
-| `pool.tsv` | words that only appear inside compounds |
-| `family.tsv` | related words: adjective -> noun/verb |
+## Alternatives to GitHub Pages
+
+- **Email `index.html` as an attachment.** It works straight from the
+  download. No hosting at all, but no easy way to push updates.
+- **Netlify Drop** (app.netlify.com/drop) — drag the folder, get a link in
+  seconds.
+
+## Note on `review.html`
+
+It is uploaded alongside the game and reachable at
+`https://<username>.github.io/<repo>/review.html`. That is harmless — it is a
+curation tool with no secrets in it — but it is not meant for learners. Delete
+it from the repo if you would rather it not be public.

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deck review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#0f151b; --panel:#17202a; --panel-2:#1d2833; --line:#26323e;
+  --ink:#e6eef4; --muted:#8095a4; --dim:#5b6c7a;
+  --part-a:#74b9d8; --part-b:#e0a860; --part-c:#b491d6;
+  --ok:#57bf92; --no:#e2685f; --warn:#d9b45c;
+  --ui:"Space Grotesk",system-ui,-apple-system,sans-serif;
+  --serif:"Newsreader",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--ground);color:var(--ink);font-family:var(--ui);
+  display:flex;flex-direction:column;min-height:100vh}
+.rail{height:3px;background:var(--line);flex:none}
+.rail i{display:block;height:100%;background:var(--part-a);width:0;transition:width .25s ease}
+header{flex:none;display:flex;align-items:baseline;gap:12px;padding:15px 24px 0;
+  font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim)}
+header b{color:var(--muted);font-weight:500}
+header .spacer{flex:1}
+.badge{color:var(--warn)}
+.role{color:var(--dim);border:1px solid var(--line);border-radius:3px;padding:1px 6px;font-size:9px}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:18px 24px}
+.card{width:100%;max-width:740px}
+
+.wordline{display:flex;align-items:flex-end;flex-wrap:wrap}
+.seg{font-family:var(--serif);font-size:52px;line-height:1.05;letter-spacing:-.01em;padding-bottom:4px}
+.seg.p0{color:var(--part-a)} .seg.p1{color:var(--part-b)} .seg.p2{color:var(--part-c)}
+.seg.solo{color:var(--ink)}
+.seam{width:1px;align-self:stretch;background:var(--line);margin:0 3px 4px}
+.meta{margin-top:7px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.meta .g{color:var(--part-b)}
+
+.claims{margin-top:18px;display:grid;gap:2px}
+.claim{display:flex;align-items:flex-start;gap:11px;padding:10px 12px;border-radius:6px;
+  border:1px solid transparent;background:var(--panel);cursor:pointer}
+.claim:hover{border-color:var(--line)}
+.claim .num{font-family:var(--mono);font-size:10px;color:var(--dim);
+  border:1px solid var(--line);border-radius:3px;padding:2px 5px;flex:none;margin-top:1px}
+.claim .body{flex:1;min-width:0}
+.claim .state{font-family:var(--mono);font-size:10.5px;flex:none;margin-top:2px;color:var(--ok)}
+.claim.rej{background:#2a1c1c;border-color:#553634}
+.claim.rej .state{color:var(--no)}
+.claim.rej .txt{text-decoration:line-through;text-decoration-color:var(--no);opacity:.6}
+.claim.dedup{background:transparent;opacity:.5}
+.claim.dedup .state{color:var(--dim)}
+.txt{font-size:15px;line-height:1.45}
+.txt .lem,.txt .frag{font-family:var(--serif);font-size:18px}
+.txt .lem{color:var(--ink)}
+.claim.k0 .frag{color:var(--part-a)} .claim.k1 .frag{color:var(--part-b)} .claim.k2 .frag{color:var(--part-c)}
+.sub{margin-top:3px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.sub .warn{color:var(--warn)} .sub .alt{color:var(--dim)}
+.de{color:var(--part-b)}
+
+/* declension: nf / þf / þgf / ef down, ± article across */
+.para{margin-top:9px;border:1px solid var(--line);border-radius:6px;overflow-x:auto}
+.para table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;white-space:nowrap}
+.para th{background:var(--panel-2);color:var(--dim);font-weight:500;text-align:left;
+  padding:6px 12px;letter-spacing:.05em;text-transform:uppercase;font-size:9px}
+.para th.grp{color:var(--muted);border-left:1px solid var(--line)}
+.para td{padding:5px 12px;border-top:1px solid var(--line);color:var(--ink)}
+.para td.c{color:var(--dim);text-transform:uppercase;font-size:9px;letter-spacing:.05em}
+.para td.gr{border-left:1px solid var(--line);color:var(--muted)}
+.para var{font-style:normal;color:var(--warn);font-size:10px;margin-left:6px}
+.para q{quotes:none;color:var(--dim);font-size:9.5px;margin-left:5px}
+.para td.zero{color:var(--dim)}
+.corpus{margin-top:8px;font-family:var(--mono);font-size:10.5px;color:var(--dim);
+  display:flex;gap:14px;flex-wrap:wrap}
+.corpus b{color:var(--muted);font-weight:500}
+.corpus .flag{color:var(--warn)}
+.note{margin-top:9px;padding:8px 11px;border-left:2px solid var(--part-b);
+  background:var(--panel);border-radius:0 5px 5px 0;font-size:13px;color:var(--muted);line-height:1.45}
+.nonoun{color:var(--warn)}
+.para th.g2{border-left:1px solid var(--line)}
+.para td.g2{border-left:1px solid var(--line)}
+.degs{margin-top:9px;font-family:var(--mono);font-size:13px;color:var(--ink);
+  display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.degs span{color:var(--dim);font-size:10px}
+.degs b{font-family:var(--serif);font-size:18px;font-weight:400}
+details.more table{font-size:11.5px}
+.fam{margin-top:8px;display:grid;gap:6px}
+.famrow{display:flex;align-items:baseline;gap:10px;font-size:14px}
+.famrow .fw{font-family:var(--serif);font-size:18px;min-width:120px;flex:none}
+.famrow.noun .fw{color:var(--a)} .famrow.verb .fw{color:var(--c)} .famrow.stem .fw{color:var(--b)}
+.famrow .fp{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:38px}
+.famrow .fm{color:var(--muted)}
+.famrow .mm{font-family:var(--mono);font-size:9.5px;color:var(--b);
+  border:1px solid var(--line);border-radius:3px;padding:1px 5px}
+.deriv{margin-top:9px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.deriv b{color:var(--b);font-weight:500}
+.fix{margin-top:9px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fix input{font-family:var(--serif);font-size:17px;background:var(--ground);color:var(--ink);
+  border:1px solid var(--line);border-radius:5px;padding:7px 10px;min-width:200px}
+.fix input:focus{outline:none;border-color:var(--part-a)}
+.verdictmsg{font-family:var(--mono);font-size:11px}
+.verdictmsg.good{color:var(--ok)} .verdictmsg.warn{color:var(--warn)} .verdictmsg.bad{color:var(--no)}
+
+footer{flex:none;border-top:1px solid var(--line);padding:12px 24px;display:flex;
+  align-items:center;gap:9px;flex-wrap:wrap;background:var(--panel)}
+button{font-family:var(--ui);font-size:13px;font-weight:500;background:var(--panel-2);
+  color:var(--ink);border:1px solid var(--line);padding:9px 15px;border-radius:6px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button:focus-visible{outline:2px solid var(--part-a);outline-offset:2px}
+button kbd{font-family:var(--mono);font-size:10px;color:var(--dim);margin-left:7px}
+#commit{border-color:#2c5545} #commit:hover{background:#1b3329;border-color:var(--ok)}
+#rejall{border-color:#5a3230} #rejall:hover{background:#33201f;border-color:var(--no)}
+footer .spacer{flex:1}
+.count{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.count .ok{color:var(--ok)} .count .no{color:var(--no)}
+.hint{font-family:var(--mono);font-size:10px;color:var(--dim);padding:0 24px 9px}
+
+.expwrap textarea{width:100%;height:200px;background:var(--ground);color:var(--ink);
+  border:1px solid var(--line);border-radius:6px;padding:10px;font-family:var(--mono);
+  font-size:11px;resize:vertical}
+.expwrap .row{display:flex;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap}
+.expwrap .note{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.done{text-align:center}
+.done h2{font-family:var(--serif);font-weight:400;font-size:36px;margin:0 0 6px}
+.done p{color:var(--muted);margin:0 0 22px;font-size:14px}
+.tally{display:flex;gap:26px;justify-content:center;margin-bottom:22px;font-family:var(--mono);font-size:12px}
+.tally div{color:var(--dim)} .tally b{display:block;font-size:28px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.tally .ok b{color:var(--ok)} .tally .no b{color:var(--no)}
+@media (max-width:620px){.seg{font-size:34px}.txt{font-size:14px}main{padding:14px}footer{padding:10px 14px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="rail"><i id="rail"></i></div>
+<header><b id="kind">—</b><span class="role" id="role"></span><span class="badge" id="conf"></span>
+  <span class="spacer"></span><span id="idx">0 / 0</span></header>
+<main><div class="card" id="card"></div></main>
+<div class="hint">Claims start accepted — press a number to reject one. Greyed claims were confirmed on an earlier card.</div>
+<footer>
+  <button id="commit">Accept &amp; next <kbd>Enter</kbd></button>
+  <button id="rejall">Reject all <kbd>R</kbd></button>
+  <button id="undo">Undo <kbd>U</kbd></button>
+  <span class="spacer"></span>
+  <span class="count" id="count"></span>
+  <button id="export">Export verdicts</button>
+</footer>
+<script>
+const DECK=__DECK_JSON__, VAL=DECK.validation, words=DECK.words;
+const CASES=['nf','þf','þgf','ef'];
+let i=0,state={},fixes={};
+const results=[],history=[],settled=new Set();
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const dedup=c=>settled.has(c.key);
+
+function resetState(){
+  state={};fixes={};
+  (words[i]?.claims||[]).forEach(c=>state[c.id]='accept');
+}
+
+function validate(v){
+  v=v.trim(); if(!v) return null;
+  if(VAL.lemmas[v]){const m=VAL.lemmas[v];
+    return{cls:'good',msg:`✓ ${v} — ${m.pos}${m.gender?' · '+m.gender:''}${m.gloss?' · '+m.gloss:''}`};}
+  if(VAL.forms[v]) return{cls:'warn',msg:`${v} is a form of ${VAL.forms[v].join(', ')} — use the base form?`};
+  return{cls:'warn',msg:'not in the local index — will be checked against BÍN on rebuild'};
+}
+
+const nf=n=>n>=1000?(n/1000).toFixed(n>=10000?0:1)+'k':String(n);
+function cellTxt(x){
+  if(!x) return '<span class="zero">—</span>';
+  return esc(x.form)+`<q>${nf(x.freq)}</q>`+(x.variants.length
+    ?`<var>${x.variants.map(v=>esc(v.form)+' '+nf(v.freq)+(v.register!=='variant'?' '+esc(v.register):'')).join(', ')}</var>`:'');
+}
+function paraTable(p){
+  if(!p) return '';
+  const rows=CASES.map(c=>`<tr><td class="c">${c}</td>
+    <td>${cellTxt(p[c].sg)}</td><td>${cellTxt(p[c].pl)}</td>
+    <td class="gr">${cellTxt(p[c].sg_def)}</td><td class="gr">${cellTxt(p[c].pl_def)}</td></tr>`).join('');
+  return `<div class="para"><table>
+    <tr><th></th><th>eintala</th><th>fleirtala</th>
+    <th class="grp">m. greini et.</th><th class="grp">m. greini ft.</th></tr>${rows}</table></div>`;
+}
+
+const GEN=[['kk','kk'],['kvk','kvk'],['hk','hk']];
+function adjTable(block,label){
+  if(!block) return '';
+  const rows=CASES.map(c=>`<tr><td class="c">${c}</td>`+
+    ['sg','pl'].map((num,i)=>GEN.map(([g])=>
+      `<td class="${i&&g==='kk'?'g2':''}">${cellTxt(block[g][c][num])}</td>`).join('')).join('')+
+    '</tr>').join('');
+  return `<div class="para"><table>
+    <tr><th>${esc(label)}</th>
+      <th>kk et.</th><th>kvk et.</th><th>hk et.</th>
+      <th class="g2">kk ft.</th><th>kvk ft.</th><th>hk ft.</th></tr>${rows}</table></div>`;
+}
+
+function claimBody(c,w){
+  if(c.kind==='gloss')
+    return `<div class="txt"><span class="lem">${esc(w.lemma)}</span> means
+      <span class="de">${esc(w.glosses.de[0].text)}</span> / ${esc(w.glosses.en[0].text)}</div>
+      ${w.glosses.de.length>1?`<div class="sub alt">also ${esc(w.glosses.de.slice(1).map(g=>g.text).join(', '))}</div>`:''}`;
+  if(c.kind==='paradigm'){
+    const k=w.corpus,fl=[];
+    if(!k.plural_attested) fl.push('no plural form reaches the corpus threshold');
+    else if(k.plural_rare) fl.push('plural very rare ('+nf(k.pl_total)+' vs '+nf(k.sg_total)+' singular)');
+    if(k.outranked.length) fl.push('a variant outranks the standard form in '+k.outranked.join(', '));
+    return `<div class="txt">declension of <span class="lem">${esc(w.lemma)}</span>
+      <span class="sub" style="display:inline">${esc(w.gender||'')}</span></div>
+      ${paraTable(w.paradigm)}
+      <div class="corpus"><span>corpus <b>${nf(k.total)}</b></span>
+        ${fl.map(f=>`<span class="flag">${esc(f)}</span>`).join('')}
+        <span>counts are per written form (homographs inflate) and 0 means below the model floor, not unattested</span></div>`;
+  }
+  if(c.kind==='adjparadigm'){
+    const p=w.paradigm;
+    return `<div class="txt">declension of <span class="lem">${esc(w.lemma)}</span>
+        <span class="sub" style="display:inline">adjective · ${p._filled} of 240 slots filled</span></div>
+      ${adjTable(p.strong,'sterk')}
+      <details class="more" data-stop="1"><summary>veik beyging (weak — after the definite article)</summary>
+        ${adjTable(p.weak,'veik')}</details>
+      <details class="more" data-stop="1"><summary>miðstig and efsta stig (comparative and superlative)</summary>
+        ${adjTable(p.comparative,'miðstig')}${adjTable(p.super_strong,'efsta st.')}</details>`;
+  }
+  if(c.kind==='degrees'){
+    const d=c.assert.split(', ');
+    return `<div class="txt">comparison</div><div class="degs">
+      <b>${esc(d[0])}</b><span>frumstig</span>
+      <b>${esc(d[1])}</b><span>miðstig</span>
+      <b>${esc(d[2])}</b><span>efsta stig</span></div>`;
+  }
+  if(c.kind==='family'){
+    const rows=w.family.map(f=>`<div class="famrow ${esc(f.rel)}">
+      <span class="fw">${esc(f.word)}</span>
+      <span class="fp">${esc(f.pos)}${f.gender?' '+esc(f.gender):''}</span>
+      <span class="fm"><span class="de">${esc(f.de)}</span> / ${esc(f.en)}</span>
+      ${f.middle_voice?`<span class="mm">miðmynd of ${esc(f.base)}</span>`:''}</div>`).join('');
+    return `<div class="txt">word family of <span class="lem">${esc(w.lemma)}</span></div>
+      <div class="fam">${rows}</div>
+      ${w.derivation?`<div class="deriv"><b>-${esc(w.derivation.suffix)}</b> — ${esc(w.derivation.note)}${w.derivation.stem?` · stem <b>${esc(w.derivation.stem)}</b>`:''}</div>`:''}`;
+  }
+  if(c.kind==='split')
+    return `<div class="txt">splits as ${esc(c.assert.split('= ')[1])}</div>`;
+  if(!c.resolved)
+    return `<div class="txt"><span class="frag">${esc(c.surface)}-</span> — no lemma found</div>
+      <div class="sub warn">needs a manual answer</div>`;
+  return `<div class="txt"><span class="frag">${esc(c.surface)}-</span> comes from
+      <span class="lem">${esc(c.lemma)}</span>${c.gloss?` — <span class="de">${esc(c.gloss.de)}</span> / ${esc(c.gloss.en)}`:''}</div>
+    <div class="sub">${esc(c.slot||'')}${c.case_name?' · '+esc(c.case_name):''}${c.gender?' · '+esc(c.gender):''}
+      ${c.via==='umlaut'?'<span class="warn">· guessed by reversing u-umlaut</span>':''}
+      ${c.has_card?'· reviewed on its own card':''}
+      ${c.alts.length?`<span class="alt">· or ${esc(c.alts.join(', '))}</span>`:''}</div>`;
+}
+
+function needsInput(c){return state[c.id]==='reject'||(c.kind==='part'&&!c.resolved);}
+
+function draw(){
+  if(i>=words.length) return drawDone();
+  const w=words[i],parts=w.compound.parts;
+  const hero=parts.length
+    ?'<div class="wordline">'+parts.map((p,n)=>(n?'<span class="seam"></span>':'')+
+      `<span class="seg p${n%3}">${esc(p.surface)}</span>`).join('')+'</div>'
+    :`<div class="wordline"><span class="seg solo">${esc(w.lemma)}</span></div>`;
+
+  const claims=w.claims.map((c,n)=>{
+    const rej=state[c.id]==='reject',dd=dedup(c)&&!rej;
+    const ki=c.kind==='part'?`k${c.index%3}`:'';
+    const fix=needsInput(c)?`<div class="fix" data-stop="1">
+      <input data-claim="${esc(c.id)}" value="${esc(fixes[c.id]||'')}"
+        placeholder="${c.kind==='part'?'correct lemma, e.g. hönd':c.kind==='paradigm'?'e.g. þgf.et.def = huginum':'correct value'}">
+      <span class="verdictmsg" id="vm-${esc(c.id)}"></span></div>`:'';
+    return `<div class="claim ${rej?'rej':''} ${dd?'dedup':''} ${ki}" data-claim="${esc(c.id)}">
+      <span class="num">${n+1}</span><div class="body">${claimBody(c,w)}${fix}</div>
+      <span class="state">${rej?'rejected':dd?'seen':'ok'}</span></div>`;
+  }).join('');
+
+  $('card').innerHTML=hero+
+    `<div class="meta">${w.gender?`<span class="g">${esc(w.gender)}</span>`:(w.wordclass==='adj'?'<span class="g">adjective</span>':`<span class="nonoun">${esc(w.pos)} — support word, not in the deck</span>`)}${w.tags.length?' · '+esc(w.tags.join(' · ')):''}</div>`+
+    (w.note?`<div class="note">${esc(w.note)}</div>`:'')+
+    `<div class="claims">${claims}</div>`;
+  $('kind').textContent=w.compound.is_compound?'compound':'simplex';
+  $('role').textContent=w.role==='part'?'support word':'deck word';
+  $('conf').textContent=w.confidence==='high'?'':w.confidence+' confidence';
+  $('idx').textContent=`${i+1} / ${words.length}`;
+  $('rail').style.width=(i/words.length*100)+'%';
+
+  $('card').querySelectorAll('.claim').forEach(el=>{
+    el.onclick=e=>{if(e.target.closest('[data-stop]'))return;toggle(el.dataset.claim);};
+  });
+  $('card').querySelectorAll('input[data-claim]').forEach(inp=>{
+    const run=()=>{fixes[inp.dataset.claim]=inp.value;
+      const v=validate(inp.value),box=$('vm-'+inp.dataset.claim);
+      box.className='verdictmsg '+(v?v.cls:'');box.textContent=v?v.msg:'';};
+    inp.oninput=run;run();
+  });
+  updateCount();
+}
+
+function toggle(id){state[id]=state[id]==='reject'?'accept':'reject';draw();}
+
+function commit(){
+  if(i>=words.length)return;
+  const w=words[i];
+  results.push({id:w.id,role:w.role,claims:w.claims.map(c=>({
+    claim:c.id,kind:c.kind,key:c.key,verdict:state[c.id],
+    repeat:dedup(c)||undefined,
+    ...(fixes[c.id]&&fixes[c.id].trim()?{correction:fixes[c.id].trim()}:{})
+  }))});
+  w.claims.forEach(c=>{if(state[c.id]==='accept')settled.add(c.key);});
+  history.push(i);i++;resetState();draw();
+}
+function rejectAll(){(words[i]?.claims||[]).forEach(c=>state[c.id]='reject');draw();}
+function undo(){
+  if(!history.length)return;
+  i=history.pop();const r=results.pop();
+  if(r) r.claims.forEach(c=>{if(!c.repeat)settled.delete(c.key);});
+  resetState();draw();
+}
+
+function drawDone(){
+  let a=0,r=0;
+  results.forEach(w=>w.claims.forEach(c=>c.verdict==='accept'?a++:r++));
+  $('card').innerHTML=`<div class="done"><h2>Búið</h2>
+    <p>Every claim has a verdict. Export to send them back.</p>
+    <div class="tally"><div class="ok"><b>${a}</b>accepted</div>
+    <div class="no"><b>${r}</b>rejected</div></div></div>`;
+  $('kind').textContent='review complete';$('role').textContent='';$('conf').textContent='';
+  $('idx').textContent=`${words.length} / ${words.length}`;
+  $('rail').style.width='100%';updateCount();
+}
+function updateCount(){
+  let a=0,r=0;
+  results.forEach(w=>w.claims.forEach(c=>c.verdict==='accept'?a++:r++));
+  $('count').innerHTML=`<span class="ok">${a} ok</span> · <span class="no">${r} rejected</span>`;
+}
+
+function exportVerdicts(){
+  const text=results.map(r=>JSON.stringify(r)).join('\n')+'\n';
+  $('card').innerHTML=`<div class="expwrap">
+    <div class="note">${results.length} cards reviewed. Copy this, or save it as verdicts.jsonl.</div>
+    <textarea id="expbox" spellcheck="false"></textarea>
+    <div class="row"><button id="copy">Copy to clipboard</button>
+    <button id="dl">Download file</button><button id="back">Back to review</button>
+    <span class="note" id="expmsg"></span></div></div>`;
+  $('expbox').value=text;$('expbox').focus();$('expbox').select();
+  $('copy').onclick=async()=>{
+    try{await navigator.clipboard.writeText(text);$('expmsg').textContent='copied';}
+    catch(err){$('expbox').select();document.execCommand('copy');$('expmsg').textContent='copied (fallback)';}
+  };
+  $('dl').onclick=()=>{
+    try{const a=document.createElement('a');
+      a.href='data:application/x-ndjson;charset=utf-8,'+encodeURIComponent(text);
+      a.download='verdicts.jsonl';document.body.appendChild(a);a.click();a.remove();
+      $('expmsg').textContent='saved';}
+    catch(err){$('expmsg').textContent='download blocked — use copy instead';}
+  };
+  $('back').onclick=draw;
+}
+
+$('commit').onclick=commit;$('rejall').onclick=rejectAll;
+$('undo').onclick=undo;$('export').onclick=exportVerdicts;
+addEventListener('keydown',e=>{
+  if(e.metaKey||e.ctrlKey||e.altKey)return;
+  if(e.key==='Enter'){e.preventDefault();commit();return;}
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  const k=e.key.toLowerCase();
+  if(k>='1'&&k<='9'){const c=(words[i]?.claims||[])[+k-1];if(c){e.preventDefault();toggle(c.id);}}
+  else if(k==='r'){e.preventDefault();rejectAll();}
+  else if(k==='u'||k==='z'){e.preventDefault();undo();}
+});
+resetState();draw();
+</script>
+</body>
+</html>
