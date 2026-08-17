@@ -95,6 +95,33 @@ h1{font-family:var(--serif);font-weight:400;font-size:34px;margin:0 0 4px;letter
 .litc b{color:var(--ink);font-weight:500;font-family:var(--serif);font-size:16px}
 .builds{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.7}
 .builds b{color:var(--b);font-weight:500}
+.famrow{display:flex;align-items:baseline;gap:10px;font-size:14.5px;margin-bottom:6px}
+.famrow .fw{font-family:var(--serif);font-size:19px;min-width:108px;flex:none}
+.famrow.noun .fw{color:var(--a)} .famrow.verb .fw{color:var(--c)} .famrow.stem .fw{color:var(--b)}
+.famrow .fp{font-family:var(--mono);font-size:9.5px;color:var(--dim);min-width:34px}
+.famrow .fm{color:var(--muted)}
+.deriv{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);
+  font-size:13px;color:var(--muted);line-height:1.45}
+.deriv b{color:var(--b);font-weight:500;font-family:var(--serif);font-size:15px}
+.agree{display:grid;gap:8px}
+.arow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.arow .phrase{font-family:var(--serif);font-size:19px;flex:none;min-width:150px}
+.arow.m .phrase b{color:var(--a)} .arow.f .phrase b{color:var(--b)} .arow.n .phrase b{color:var(--c)}
+.arow .phrase b{font-weight:400}
+.arow .gl{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.arow .mean{color:var(--muted);font-size:13px}
+.degrow{display:grid;gap:7px;margin-top:2px}
+.degrow .d{display:flex;align-items:baseline;gap:10px}
+.degrow .d b{font-family:var(--serif);font-size:19px;font-weight:400;min-width:120px;flex:none}
+.degrow .d.mid b{color:var(--b)} .degrow .d.sup b{color:var(--c)}
+.degrow .d span{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.intro{max-width:520px;margin:0 auto}
+.intro h2{font-family:var(--serif);font-weight:400;font-size:30px;margin:0 0 8px}
+.intro p{color:var(--muted);font-size:14.5px;line-height:1.6;margin:0 0 14px}
+.intro .box{background:var(--panel);border:1px solid var(--line);border-radius:9px;
+  padding:14px 16px;margin-bottom:14px}
+.intro .box .rt{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--dim);margin-bottom:9px}
 .note{margin-top:10px;font-size:13px;color:var(--muted);line-height:1.45;
   border-left:2px solid var(--b);padding-left:10px}
 
@@ -142,14 +169,23 @@ footer .spacer{flex:1}
 
 <script>
 const DATA=__GAME_JSON__;
-const W=DATA.words, SUP=DATA.support;
+const W=DATA.words, SUP=DATA.support, DEMO=DATA.demo;
+const GENDER_NAME={m:['karlkyn','masculine','maskulin'],
+                   f:['kvenkyn','feminine','feminin'],
+                   n:['hvorugkyn','neuter','neutrum']};
+const DEGREE_NAME={0:['frumstig','positive','Grundstufe'],
+                   1:['miðstig','comparative','Komparativ'],
+                   2:['efsta stig','superlative','Superlativ']};
+const gname=g=>GENDER_NAME[g][0]+' — '+(P.lang==='de'?GENDER_NAME[g][2]:GENDER_NAME[g][1]);
+const dname=i=>DEGREE_NAME[i][0]+' · '+(P.lang==='de'?DEGREE_NAME[i][2]:DEGREE_NAME[i][1]);
+const pickDemo=g=>{const a=DEMO[g]||[];return a.length?a[Math.floor(Math.random()*a.length)]:null;};
 const byId={}; W.forEach(w=>byId[w.id]=w);
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 /* ---------- progress ---------- */
 const KEY='ordaleikur.v1';
-let P={lang:'de', s:{}};        // s[id] = {n: seen, k: correct streak, str: 0..5}
+let P={lang:'de', intro:false, s:{}};        // s[id] = {n: seen, k: correct streak, str: 0..5}
 try{ const raw=localStorage.getItem(KEY); if(raw) P=Object.assign(P,JSON.parse(raw)); }catch(e){}
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(P)); }catch(e){} }
 const st=id=>P.s[id]||(P.s[id]={n:0,k:0,str:0});
@@ -164,7 +200,8 @@ const glossOf=id=>byId[id]?gloss(byId[id]):(SUP[id]?SUP[id][P.lang]:id);
 function partKnown(p){ return p.lemma && (byId[p.lemma] ? known(p.lemma) : true); }
 
 /* ---------- lanes ---------- */
-const LANES=[
+const THEMES=[
+ {id:'nouns', name:'Nouns', sub:'Vocabulary · Nouns', pick:w=>w.wc!=='adj', lanes:[
   {id:'blocks', name:'Building blocks', ico:'⬡',
    desc:'The stems that combine into the most other words. Learn these first.',
    pick:w=>w.prod>0 && !w.parts.length,
@@ -177,8 +214,26 @@ const LANES=[
    pick:w=>w.parts.length>0, sort:(a,b)=>b.freq-a.freq},
   {id:'all', name:'Everything', ico:'◆',
    desc:'All nouns mixed together.', pick:()=>true, sort:(a,b)=>b.freq-a.freq},
+ ]},
+ {id:'adj', name:'Adjectives', sub:'Vocabulary · Adjectives', pick:w=>w.wc==='adj', lanes:[
+  {id:'colour', name:'Colours', ico:'◐',
+   desc:'Basic colours, plus ljós- and dökk- to shade them.',
+   pick:w=>w.tags.includes('colour'), sort:(a,b)=>b.freq-a.freq},
+  {id:'people', name:'Describing people', ico:'☺',
+   desc:'Funny, lazy, tall, kind.',
+   pick:w=>w.tags.includes('people'), sort:(a,b)=>b.freq-a.freq},
+  {id:'object', name:'Describing things', ico:'▣',
+   desc:'Big, heavy, soft, cheap.',
+   pick:w=>w.tags.includes('object'), sort:(a,b)=>b.freq-a.freq},
+  {id:'feeling', name:'How you feel', ico:'♨',
+   desc:'Hungry, tired, thirsty, nervous.',
+   pick:w=>w.tags.includes('feeling'), sort:(a,b)=>b.freq-a.freq},
+  {id:'adjall', name:'Everything', ico:'◆',
+   desc:'All adjectives mixed together.', pick:()=>true, sort:(a,b)=>b.freq-a.freq},
+ ]},
 ];
-const pool=l=>W.filter(l.pick).sort(l.sort);
+let theme=THEMES[0];
+const pool=l=>W.filter(theme.pick).filter(l.pick).sort(l.sort);
 
 /* ---------- state ---------- */
 let view='menu', lane=null, queue=[], q=null, answered=false, chosen=null, last=null;
@@ -195,35 +250,68 @@ function pill(){
 /* ---------- menu ---------- */
 function drawMenu(){
   view='menu'; lane=null; $('back').hidden=true; setBar(0);
-  const lanes=LANES.map(l=>{
-    const p=pool(l), done=p.filter(w=>learnt(w.id)).length;
-    return `<button class="lane" data-lane="${l.id}">
-      <span class="ico">${l.ico}</span>
-      <span class="t"><b>${esc(l.name)}</b><span>${esc(l.desc)}</span></span>
-      <span class="n">${done}/${p.length}</span></button>`;
+  const blocks=THEMES.map(th=>{
+    const prev=theme; theme=th;
+    const rows=th.lanes.map(l=>{
+      const p=pool(l), done=p.filter(w=>learnt(w.id)).length;
+      return `<button class="lane" data-theme="${th.id}" data-lane="${l.id}">
+        <span class="ico">${l.ico}</span>
+        <span class="t"><b>${esc(l.name)}</b><span>${esc(l.desc)}</span></span>
+        <span class="n">${done}/${p.length}</span></button>`;
+    }).join('');
+    theme=prev;
+    return `<div class="section">${esc(th.sub)}</div><div class="lanes">${rows}</div>`;
   }).join('');
   $('app').innerHTML=`<h1>Orðaleikur</h1>
-    <p class="sub">Icelandic nouns. Pick the meaning — and when a word is built
+    <p class="sub">Icelandic words. Pick the meaning — and when a word is built
     from smaller ones, see exactly which.</p>
-    <div class="section">Vocabulary · Nouns</div>
-    <div class="lanes">${lanes}</div>
+    ${blocks}
     <div class="section">Later</div>
     <div class="lanes">
-      <div class="lane locked"><span class="ico">◇</span>
-        <span class="t"><b>Adjectives</b><span>Not built yet</span></span></div>
       <div class="lane locked"><span class="ico">◇</span>
         <span class="t"><b>Verbs</b><span>Not built yet</span></span></div>
       <div class="lane locked"><span class="ico">◇</span>
         <span class="t"><b>Everyday phrases</b><span>Ordering, feelings, describing things</span></span></div>
     </div>`;
-  $('app').querySelectorAll('[data-lane]').forEach(b=>
-    b.onclick=()=>start(LANES.find(l=>l.id===b.dataset.lane)));
+  $('app').querySelectorAll('[data-lane]').forEach(b=>b.onclick=()=>{
+    theme=THEMES.find(t=>t.id===b.dataset.theme);
+    start(theme.lanes.find(l=>l.id===b.dataset.lane));
+  });
   pill();
 }
 
 /* ---------- session ---------- */
+function introHTML(){
+  return `<div class="intro"><h2>How Icelandic adjectives work</h2>
+    <p>An adjective changes shape to match the noun it describes. There are
+    three genders, and each takes a different ending.</p>
+    <div class="box"><div class="rt">the same adjective, three genders</div>
+      <div class="agree">
+        <div class="arow m"><span class="phrase"><b>rauður</b> bíll</span>
+          <span class="gl">${esc(gname('m'))}</span><span class="mean">a red car</span></div>
+        <div class="arow f"><span class="phrase"><b>rauð</b> rós</span>
+          <span class="gl">${esc(gname('f'))}</span><span class="mean">a red rose</span></div>
+        <div class="arow n"><span class="phrase"><b>rautt</b> hús</span>
+          <span class="gl">${esc(gname('n'))}</span><span class="mean">a red house</span></div>
+      </div></div>
+    <p>Adjectives also come in three degrees, the same as English big / bigger / biggest.</p>
+    <div class="box"><div class="rt">three degrees</div><div class="degrow">
+      <div class="d"><b>gulur</b><span>${esc(dname(0))} — yellow</span></div>
+      <div class="d mid"><b>gulari</b><span>${esc(dname(1))} — more yellow</span></div>
+      <div class="d sup"><b>gulastur</b><span>${esc(dname(2))} — most yellow</span></div>
+    </div></div>
+    <p>You only have to recognise the meaning here. The forms are shown after
+    each answer so they sink in on their own.</p>
+    <button class="next" id="gotit">Start</button></div>`;
+}
+
 function start(l){
   lane=l; view='play'; $('back').hidden=false;
+  if(theme.id==='adj' && !P.intro){
+    $('app').innerHTML=introHTML();
+    $('gotit').onclick=()=>{ P.intro=true; save(); start(l); };
+    setBar(0); return;
+  }
   session={asked:0,right:0,newly:[]};
   const p=pool(l);
   // Weakest and least-seen first, but never the same word twice running.
@@ -251,7 +339,8 @@ function next(){
   last=w.id;
   const opts=[w.id,...pickDistractors(w,3)];
   for(let i=opts.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[opts[i],opts[j]]=[opts[j],opts[i]];}
-  q={w,opts}; answered=false; chosen=null;
+  q={w,opts,demo:{m:pickDemo('m'),f:pickDemo('f'),n:pickDemo('n')}};
+  answered=false; chosen=null;
   drawQ();
 }
 
@@ -288,7 +377,9 @@ function paintAnswered(){
     else if(b.dataset.id===chosen){ b.classList.add('wrong');
       // Show what they actually picked, in Icelandic — a free second word.
       b.querySelector('.tag').textContent=b.dataset.id; }
-    else { b.classList.add('faded'); b.querySelector('.tag').textContent=''; }
+    else { b.classList.add('faded');
+      // Show the Icelandic for every option, so a round teaches four words.
+      b.querySelector('.tag').textContent=b.dataset.id; }
   });
   $('app').querySelector('.qword').innerHTML=wordHTML(w);
   $('app').querySelector('.qhint').textContent='';
@@ -311,6 +402,23 @@ function answer(id){
 
 function breakdown(w){
   let html='';
+  if(w.wc==='adj'&&w.forms){
+    const rows=[['m','kk'],['f','kvk'],['n','hk']].map(([g,k])=>{
+      const n=q&&q.demo?q.demo[g]:pickDemo(g);
+      const form=w.forms[k]||'—';
+      return `<div class="arow ${g}">
+        <span class="phrase"><b>${esc(form)}</b>${n?' '+esc(n.w):''}</span>
+        <span class="gl">${esc(gname(g))}</span>
+        ${n?`<span class="mean">${esc(P.lang==='de'?n.de:n.en)}</span>`:''}</div>`;
+    }).join('');
+    html+=`<div class="reveal"><div class="rt">agrees with the noun</div>
+      <div class="agree">${rows}</div>
+      ${w.deg&&w.deg[1]?`<div class="litc"><div class="degrow">
+        ${[0,1,2].map(i=>`<div class="d ${i===1?'mid':i===2?'sup':''}">
+          <b>${esc(w.deg[i]||'—')}</b><span>${esc(dname(i))}</span></div>`).join('')}
+      </div></div>`:''}
+      ${w.note?`<div class="note">${esc(w.note)}</div>`:''}</div>`;
+  }
   if(w.parts.length){
     const pieces=w.parts.map((p,n)=>{
       const kn=p.lemma&&byId[p.lemma]&&known(p.lemma);
@@ -323,8 +431,16 @@ function breakdown(w){
     html+=`<div class="reveal"><div class="rt">built from</div>
       <div class="pieces">${pieces}</div>
       <div class="litc">literally <b>${esc(lit)}</b> — ${esc(gloss(w))}</div>
-      ${w.note?`<div class="note">${esc(w.note)}</div>`:''}</div>`;
-  } else if(w.builds.length){
+      ${w.wc!=='adj'&&w.note?`<div class="note">${esc(w.note)}</div>`:''}</div>`;
+  }
+  if(w.fam&&w.fam.length){
+    html+=`<div class="reveal"><div class="rt">same family</div>
+      ${w.fam.map(f=>`<div class="famrow ${esc(f.rel)}">
+        <span class="fw">${esc(f.w)}</span><span class="fp">${esc(f.p)}</span>
+        <span class="fm">${esc(P.lang==='de'?f.de:f.en)}</span></div>`).join('')}
+      ${w.deriv?`<div class="deriv"><b>-${esc(w.deriv.suffix)}</b> ${esc(w.deriv.note)}</div>`:''}</div>`;
+  }
+  if(!w.parts.length&&!(w.fam&&w.fam.length)&&w.builds.length){
     html+=`<div class="reveal"><div class="rt">this word builds</div>
       <div class="builds">${w.builds.map(b=>
         `<b>${esc(b)}</b> ${esc(byId[b]?gloss(byId[b]):'')}`).join('<br>')}</div></div>`;
@@ -365,7 +481,7 @@ $('back').onclick=drawMenu;
 $('lang').onclick=()=>{ P.lang=P.lang==='de'?'en':'de'; save();
   $('lang').innerHTML='glosses <b>'+P.lang.toUpperCase()+'</b>';
   if(view==='menu')drawMenu(); else if(view==='play')drawQ(); else summary(); };
-$('reset').onclick=()=>{ if(confirm('Erase all progress?')){ P={lang:P.lang,s:{}}; save(); drawMenu(); } };
+$('reset').onclick=()=>{ if(confirm('Erase all progress?')){ P={lang:P.lang,intro:P.intro,s:{}}; save(); drawMenu(); } };
 $('lang').innerHTML='glosses <b>'+P.lang.toUpperCase()+'</b>';
 drawMenu();
 </script>
