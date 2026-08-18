@@ -22,10 +22,27 @@ for c in deck["words"]:
         parts.append({
             "surface": p["surface"],
             "suffix": p.get("suffix", False),
+            "uid": top.get("uid") if top else None,
             "lemma": top["lemma"] if top else None,
             "de": top["gloss"]["de"] if top and top["gloss"] else None,
             "en": top["gloss"]["en"] if top and top["gloss"] else None,
         })
+    conj = None
+    if c["wordclass"] == "verb" and c["paradigm"]:
+        p = c["paradigm"]
+        pick = lambda t, k: (p[t][k] or {}).get("form") if p.get(t) else None
+        conj = {
+            "inf": p["infinitive"], "sup": p["supine"],
+            "imp": p["imperative_sg"], "impPl": p["imperative_pl"],
+            "voice": p["voice"],
+            "pron": p["pronouns"],
+            "pres": {k: pick("present", k) for k in
+                     ("1ET", "2ET", "3ET", "1FT", "2FT", "3FT")},
+            "past": {k: pick("past", k) for k in
+                     ("1ET", "2ET", "3ET", "1FT", "2FT", "3FT")},
+            "fut": {k: p["future"][k]["form"] for k in
+                    ("1ET", "2ET", "3ET", "1FT", "2FT", "3FT")},
+        }
     deg = None
     if c["wordclass"] == "adj" and c["paradigm"]:
         p = c["paradigm"]
@@ -35,9 +52,11 @@ for c in deck["words"]:
                  for g in ("kk", "kvk", "hk")}
     words.append({
         "wc": c["wordclass"],
+        "conj": conj,
         "deg": deg,
         "forms": forms if c["wordclass"] == "adj" and c["paradigm"] else None,
         "id": c["id"],
+        "lemma": c["lemma"],
         "de": [g["text"] for g in c["glosses"]["de"]],
         "en": [g["text"] for g in c["glosses"]["en"]],
         "g": c["gender_short"],
@@ -56,7 +75,8 @@ for c in deck["words"]:
 
 # Support lemmas that only ever appear inside compounds still need glosses,
 # so the breakdown can show what each part means.
-support = {c["id"]: {"de": c["glosses"]["de"][0]["text"],
+support = {c["id"]: {"lemma": c["lemma"],
+                     "de": c["glosses"]["de"][0]["text"],
                      "en": c["glosses"]["en"][0]["text"],
                      "prod": c["productivity"],
                      "builds": [b for b in c["builds"]

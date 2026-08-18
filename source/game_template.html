@@ -102,6 +102,24 @@ h1{font-family:var(--serif);font-weight:400;font-size:34px;margin:0 0 4px;letter
 .deriv{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);
   font-size:13px;color:var(--muted);line-height:1.45}
 .deriv b{color:var(--b);font-weight:500;font-family:var(--serif);font-size:15px}
+.vtab{margin-top:4px;border:1px solid var(--line);border-radius:8px;overflow-x:auto}
+.vtab table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+.vtab th{background:var(--panel-2);color:var(--dim);font-weight:500;text-align:left;
+  padding:6px 11px;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase}
+.vtab td{padding:6px 11px;border-top:1px solid var(--line);color:var(--ink)}
+.vtab td.vp{color:var(--b);font-family:var(--serif);font-size:15px}
+.vtab td.vf{color:var(--dim)}
+.vparts{margin-top:11px;display:flex;gap:18px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:11px;color:var(--dim)}
+.vparts b{font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:400}
+.vbrief{display:flex;gap:20px;flex-wrap:wrap;align-items:baseline;margin-bottom:4px}
+.vbrief span{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.vbrief b{font-family:var(--serif);font-size:22px;color:var(--ink);font-weight:400;margin-left:6px}
+details.more2{margin-top:10px}
+details.more2 summary{font-family:var(--mono);font-size:10.5px;color:var(--a);cursor:pointer;list-style:none}
+details.more2 summary::-webkit-details-marker{display:none}
+details.more2 summary:before{content:"▸ "}
+details.more2[open] summary:before{content:"▾ "}
 .agree{display:grid;gap:8px}
 .arow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .arow .phrase{font-family:var(--serif);font-size:19px;flex:none;min-width:150px}
@@ -310,17 +328,30 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const KEY='ordaleikur.v1';
 // s[id] = {n: times seen, k: correct streak, str: 0..5, m: marked learnt}
 let P={lang:'de', intro:false, len:12, s:{}};
-let STORAGE_OK=false;
+let STORAGE_OK=false, MIGRATE=false;
 try{                                    // prove the browser will actually keep it
   localStorage.setItem(KEY+'.probe','1');
   STORAGE_OK = localStorage.getItem(KEY+'.probe')==='1';
   localStorage.removeItem(KEY+'.probe');
   const raw=localStorage.getItem(KEY);
   if(raw) P=Object.assign(P,JSON.parse(raw));
+  MIGRATE=true;
 }catch(e){ STORAGE_OK=false; }
 function save(){
   if(!STORAGE_OK) return;
   try{ localStorage.setItem(KEY,JSON.stringify(P)); }catch(e){ STORAGE_OK=false; }
+}
+// Progress used to be keyed by the bare spelling. Move those onto the new
+// wordclass-qualified ids, skipping any spelling that now maps to two cards.
+if(MIGRATE){
+  const byLemma={};
+  W.forEach(w=>{ (byLemma[w.lemma]=byLemma[w.lemma]||[]).push(w.id); });
+  Object.keys(P.s).forEach(k=>{
+    if(k.indexOf(':')>=0) return;
+    const hits=byLemma[k];
+    if(hits&&hits.length===1&&!P.s[hits[0]]) P.s[hits[0]]=P.s[k];
+    delete P.s[k];
+  });
 }
 const st=id=>P.s[id]||(P.s[id]={n:0,k:0,str:0,m:false});
 const strength=id=>(P.s[id]||{}).str||0;
@@ -330,14 +361,15 @@ const ripe=id=>strength(id)>=5;                    // eligible to be marked
 const active=id=>!learnt(id);
 const gloss=w=>(P.lang==='de'?w.de:w.en)[0];
 const glossOf=id=>byId[id]?gloss(byId[id]):(SUP[id]?SUP[id][P.lang]:id);
+const lemmaOf=id=>byId[id]?byId[id].lemma:(SUP[id]?SUP[id].lemma:id);
 
 /* A compound part counts as known if it is a deck word the player has learnt,
    or a support word whose meaning we can simply show. */
-function partKnown(p){ return p.lemma && (byId[p.lemma] ? known(p.lemma) : true); }
+function partKnown(p){ return p.uid && (byId[p.uid] ? known(p.uid) : true); }
 
 /* ---------- lanes ---------- */
 const THEMES=[
- {id:'nouns', name:'Nouns', sub:'Vocabulary · Nouns', pick:w=>w.wc!=='adj', lanes:[
+ {id:'nouns', name:'Nouns', sub:'Vocabulary · Nouns', pick:w=>w.wc==='noun', lanes:[
   {id:'blocks', name:'Building blocks', ico:'⬡',
    desc:'The stems that combine into the most other words. Learn these first.',
    pick:w=>w.prod>0 && !w.parts.length,
@@ -350,6 +382,25 @@ const THEMES=[
    pick:w=>w.parts.length>0, sort:(a,b)=>b.freq-a.freq},
   {id:'all', name:'Everything', ico:'◆',
    desc:'All nouns mixed together.', pick:()=>true, sort:(a,b)=>b.freq-a.freq},
+ ]},
+ {id:'verbs', name:'Verbs', sub:'Vocabulary · Verbs', pick:w=>w.wc==='verb', lanes:[
+  {id:'vcore', name:'The essential ones', ico:'✦',
+   desc:'vera, hafa, gera, geta — the verbs everything else leans on.',
+   pick:w=>w.tags.includes('core'), sort:(a,b)=>b.freq-a.freq},
+  {id:'vdaily', name:'Everyday actions', ico:'☼',
+   desc:'Eating, sleeping, opening, waiting.',
+   pick:w=>w.tags.includes('daily')||w.tags.includes('food'), sort:(a,b)=>b.freq-a.freq},
+  {id:'vmotion', name:'Going places', ico:'➔',
+   desc:'Coming, going, walking, driving.',
+   pick:w=>w.tags.includes('motion'), sort:(a,b)=>b.freq-a.freq},
+  {id:'vspeech', name:'Talking to people', ico:'❝',
+   desc:'Saying, asking, answering, thanking.',
+   pick:w=>w.tags.includes('speech'), sort:(a,b)=>b.freq-a.freq},
+  {id:'vmind', name:'Thinking and feeling', ico:'✧',
+   desc:'Knowing, understanding, remembering, hoping.',
+   pick:w=>w.tags.includes('mind')||w.tags.includes('feeling'), sort:(a,b)=>b.freq-a.freq},
+  {id:'vall', name:'Everything', ico:'◆',
+   desc:'All verbs mixed together.', pick:()=>true, sort:(a,b)=>b.freq-a.freq},
  ]},
  {id:'adj', name:'Adjectives', sub:'Vocabulary · Adjectives', pick:w=>w.wc==='adj', lanes:[
   {id:'colour', name:'Colours', ico:'◐',
@@ -422,8 +473,6 @@ function drawMenu(){
     ${blocks}
     <div class="section">Later</div>
     <div class="lanes">
-      <div class="lane locked"><span class="ico">◇</span>
-        <span class="t"><b>Verbs</b><span>Not built yet</span></span></div>
       <div class="lane locked"><span class="ico">◇</span>
         <span class="t"><b>Everyday phrases</b><span>Ordering, feelings, describing things</span></span></div>
     </div>`;
@@ -513,7 +562,8 @@ function next(){
 }
 
 function wordHTML(w){
-  if(!w.parts.length) return `<span class="seg plain">${esc(w.id)}</span>`;
+  if(w.wc==='verb') return `<span class="seg plain" style="color:var(--muted)">að </span><span class="seg plain">${esc(w.lemma)}</span>`;
+  if(!w.parts.length) return `<span class="seg plain">${esc(w.lemma)}</span>`;
   const show=answered || w.parts.every(partKnown);
   if(!show) return `<span class="seg plain">${esc(w.id)}</span>`;
   return w.parts.map((p,n)=>(n?'<span class="seam"></span>':'')+
@@ -542,13 +592,13 @@ function paintAnswered(){
   $('app').querySelectorAll('.opt').forEach(b=>{
     b.disabled=true; b.onclick=null;
     b.classList.remove('right','wrong','faded');
-    if(b.dataset.id===w.id){ b.classList.add('right'); b.querySelector('.tag').textContent=w.id; }
+    if(b.dataset.id===w.id){ b.classList.add('right'); b.querySelector('.tag').textContent=lemmaOf(w.id); }
     else if(b.dataset.id===chosen){ b.classList.add('wrong');
       // Show what they actually picked, in Icelandic — a free second word.
-      b.querySelector('.tag').textContent=b.dataset.id; }
+      b.querySelector('.tag').textContent=lemmaOf(b.dataset.id); }
     else { b.classList.add('faded');
       // Show the Icelandic for every option, so a round teaches four words.
-      b.querySelector('.tag').textContent=b.dataset.id; }
+      b.querySelector('.tag').textContent=lemmaOf(b.dataset.id); }
   });
   $('app').querySelector('.qword').innerHTML=wordHTML(w);
   $('app').querySelector('.qhint').textContent='';
@@ -568,7 +618,7 @@ function paintAnswered(){
       <span class="mtxt">${moved}</span></div>`+
     breakdown(w)+
     (offer?`<div id="ripe">
-      <button class="markbtn" id="markyes">Mark ${esc(w.id)} as learnt</button>
+      <button class="markbtn" id="markyes">Mark ${esc(w.lemma)} as learnt</button>
       <button class="keepbtn" id="markno">Keep practising it</button></div>`:'')+
     `<button class="next" id="nx">Next</button>`;
   if(offer){
@@ -602,6 +652,29 @@ function answer(id){
 
 function breakdown(w){
   let html='';
+  if(w.wc==='verb'&&w.conj){
+    const c=w.conj, K=['1ET','2ET','3ET','1FT','2FT','3FT'];
+    const s=strength(w.id);
+    const rows=K.map(k=>`<tr><td class="vp">${esc(c.pron[k])}</td>
+      <td>${esc(c.pres[k]||'—')}</td><td>${esc(c.past[k]||'—')}</td>
+      <td class="vf">${esc(c.fut[k])}</td></tr>`).join('');
+    const table=`<div class="vtab"><table>
+        <tr><th></th><th>núna</th><th>í gær</th><th>á morgun</th></tr>${rows}</table></div>
+      <div class="vparts"><span>að <b>${esc(c.inf)}</b></span>
+        ${c.sup?`<span>ég hef <b>${esc(c.sup)}</b></span>`:''}
+        ${c.imp?`<span><b>${esc(c.imp)}!</b></span>`:''}
+        ${c.impPl?`<span><b>${esc(c.impPl)}!</b> (fleiri)</span>`:''}</div>`;
+    // A beginner meeting a verb for the first time needs the meaning and one
+    // usable form, not eighteen cells. The rest unlocks as the word is learnt.
+    const brief=`<div class="vbrief">
+        <span>ég <b>${esc(c.pres['1ET']||'—')}</b></span>
+        <span>í gær <b>${esc(c.past['1ET']||'—')}</b></span>
+        ${c.imp?`<span><b>${esc(c.imp)}!</b></span>`:''}</div>`;
+    html+=`<div class="reveal"><div class="rt">how it is used</div>
+      ${s>=4?table:brief+`<details class="more2"><summary>show the full conjugation</summary>${table}</details>`}
+      ${c.voice==='middle'?'<div class="deriv">This verb only exists with the -st ending.</div>':''}
+      ${w.note?`<div class="note">${esc(w.note)}</div>`:''}</div>`;
+  }
   if(w.wc==='adj'&&w.forms){
     const rows=[['m','kk'],['f','kvk'],['n','hk']].map(([g,k])=>{
       const n=q&&q.demo?q.demo[g]:pickDemo(g);
@@ -624,7 +697,7 @@ function breakdown(w){
       if(p.suffix) return `<div class="piece p${n%3}">
         <span class="w">-${esc(p.surface)}</span>
         <span class="m">ending, not a word on its own</span></div>`;
-      const kn=p.lemma&&byId[p.lemma]&&known(p.lemma);
+      const kn=p.uid&&byId[p.uid]&&known(p.uid);
       const meaning=p[P.lang]||'';
       return `<div class="piece p${n%3}"><span class="w">${esc(p.lemma||p.surface)}</span>
         <span class="m">${esc(meaning)}</span>
@@ -665,8 +738,8 @@ function summary(){
       <div class="stat a"><b>${session.best}</b><span>best run of correct answers</span></div>
       <div class="stat"><b>${session.fresh.length?Math.round(session.right/session.asked*100):0}%</b><span>accuracy this round</span></div>
     </div>
-    ${nw.length?`<div class="newlist">marked this round<br>${nw.map(x=>'<b>'+esc(x)+'</b>').join(' · ')}</div>`:''}
-    ${ripeLeft.length?`<div class="newlist">ready to mark, in All words<br>${ripeLeft.map(esc).join(' · ')}</div>`:''}
+    ${nw.length?`<div class="newlist">marked this round<br>${nw.map(x=>'<b>'+esc(lemmaOf(x))+'</b>').join(' · ')}</div>`:''}
+    ${ripeLeft.length?`<div class="newlist">ready to mark, in All words<br>${ripeLeft.map(x=>esc(lemmaOf(x))).join(' · ')}</div>`:''}
     <div class="row"><button id="again">Another round</button>
       <button id="menu">Back to menu</button></div>`;
   $('again').onclick=()=>start(lane);
@@ -710,8 +783,8 @@ let wlFilter='all', wlMode='list';
 const COLLECT=(()=>{
   const m={};
   W.forEach(w=>w.parts.forEach(p=>{
-    if(!p.lemma||p.suffix) return;
-    (m[p.lemma]=m[p.lemma]||new Set()).add(w.id);
+    if(!p.uid||p.suffix) return;
+    (m[p.uid]=m[p.uid]||new Set()).add(w.id);
   }));
   return Object.entries(m)
     .map(([stem,set])=>({stem, words:[...set].sort()}))
@@ -731,12 +804,12 @@ function drawCollections(){
       const lit=w.parts.map(p=>p.suffix?'-'+p.surface:(p[P.lang]||p.surface)).join(' + ');
       return `<button class="fam-i ${seen?'got':''}" data-w="${esc(id)}">
         <span class="tick">${seen?'✓':'○'}</span>
-        <span class="cw">${esc(id)}</span>
+        <span class="cw">${esc(byId[id].lemma)}</span>
         <span class="lit">${esc(lit)}</span>
         <span class="cm">${seen?esc(gloss(w)):'—'}</span></button>`;
     }).join('');
     return `<div class="fam-g">
-      <div class="fam-h"><span class="fw">${esc(c.stem)}</span>
+      <div class="fam-h"><span class="fw">${esc(lemmaOf(c.stem))}</span>
         <span class="fm">${esc(stemMeaning(c.stem))}</span>
         <span class="stars">${ss===null?'':'★'.repeat(ss)+'☆'.repeat(MAXSTR-ss)}</span></div>
       <div class="fam-b">${rows}</div>
@@ -757,7 +830,7 @@ function drawWords(){
     const s=P.s[w.id]||{n:0,str:0}, d=learnt(w.id);
     return `<button class="wlrow ${d?'done':''}" data-w="${esc(w.id)}">
       <span class="box">${d?'✓':''}</span>
-      <span class="ww">${esc(w.id)}</span>
+      <span class="ww">${esc(w.lemma)}</span>
       <span class="wm">${esc(gloss(w))}</span>
       <span class="ws">${d?'learnt':s.n?s.str+'/5':'—'}</span></button>`;
   }).join('');

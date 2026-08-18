@@ -12,7 +12,7 @@ import json
 import os
 import re
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 from icegrams import Ngrams
 from islenska import Bin
@@ -60,6 +60,20 @@ ADJ_GENDERS = [("kk", "KK"), ("kvk", "KVK"), ("hk", "HK")]
 ADJ_DEGREES = [("strong", "FSB"), ("weak", "FVB"),
                ("comparative", "MST"), ("super_strong", "ESB"), ("super_weak", "EVB")]
 ADJ_MARK_RE = re.compile(r"^(FSB|FVB|MST|ESB|EVB)-(KK|KVK|HK)-(NF|ÞF|ÞGF|EF)(ET|FT)(\d*)$")
+# Verbs. The mark must match exactly: a SP- prefix is the fused question form
+# (talarðu), and an OP- prefix is an impersonal construction. Both would
+# otherwise contaminate the plain conjugation.
+VERB_FH_RE = re.compile(r"^GM-FH-(NT|ÞT)-([123])P-(ET|FT)$")
+VERB_VH_RE = re.compile(r"^GM-VH-(NT|ÞT)-([123])P-(ET|FT)$")
+MM_FH_RE = re.compile(r"^MM-FH-(NT|ÞT)-([123])P-(ET|FT)$")
+MM_VH_RE = re.compile(r"^MM-VH-(NT|ÞT)-([123])P-(ET|FT)$")
+PRONOUN = {("1", "ET"): "ég", ("2", "ET"): "þú", ("3", "ET"): "hann/hún",
+           ("1", "FT"): "við", ("2", "FT"): "þið", ("3", "FT"): "þeir/þær/þau"}
+PERSONS = [("1", "ET"), ("2", "ET"), ("3", "ET"),
+           ("1", "FT"), ("2", "FT"), ("3", "FT")]
+# Icelandic has no synthetic future; it is built with munu + the infinitive.
+MUNU = {("1", "ET"): "mun", ("2", "ET"): "munt", ("3", "ET"): "mun",
+        ("1", "FT"): "munum", ("2", "FT"): "munuð", ("3", "FT"): "munu"}
 
 
 def head_entry(word, pos=None):
@@ -194,6 +208,127 @@ def adj_paradigm(lemma):
     if not filled:
         return None
     out["_filled"] = filled
+    return out
+
+
+def verb_cell(hits, regex, want):
+    """Pick the standard form for one person/number slot."""
+    keep = []
+    for h in hits:
+        m = regex.match(h.mark)
+        if m and (m.group(2), m.group(3)) == want:
+            keep.append(h)
+    keep = [h for h in keep if h.bmalsnid not in DROP_REGISTER]
+    if not keep:
+        return None
+    keep.sort(key=lambda k: (getattr(k, "beinkunn", 0) != 1, bool(k.bmalsnid),
+                             -freq(k.bmynd), k.bmynd))
+    primary = keep[0]
+    seen = {primary.bmynd}
+    variants = []
+    for k in keep[1:]:
+        if k.bmynd in seen:
+            continue
+        seen.add(k.bmynd)
+        variants.append({"form": k.bmynd,
+                         "register": REGISTER.get(k.bmalsnid, k.bmalsnid) or "variant",
+                         "freq": freq(k.bmynd)})
+    return {"form": primary.bmynd, "freq": freq(primary.bmynd), "variants": variants}
+
+
+def one_form(lemma, bid, mark):
+    try:
+        hits = [h for h in BIN.lookup_variants(lemma, "so", (mark,))
+                if h.bin_id == bid and h.mark == mark
+                and h.bmalsnid not in DROP_REGISTER]
+    except Exception:
+        return None
+    if not hits:
+        return None
+    hits.sort(key=lambda k: (getattr(k, "beinkunn", 0) != 1, -freq(k.bmynd)))
+    return hits[0].bmynd
+
+
+def verb_paradigm(lemma, force_bin_id=None, force_supine=None):
+    """Full beginner-facing conjugation: infinitive, present, past, future,
+    imperative, supine and participles, plus the subjunctive for completeness."""
+    entry = head_entry(lemma, "so")
+    if entry is None or entry.ofl != "so":
+        return None
+    # Several verbs share a spelling: "muna" is both "to remember" and an
+    # impersonal verb meaning "to matter", whose forms are all OP- marked.
+    # Choose the bin_id that actually has a plain personal conjugation.
+    try:
+        allfh = [h for h in BIN.lookup_variants(entry.ord, "so", ("GM", "FH"))
+                 if h.ord == entry.ord]
+    except Exception:
+        allfh = []
+    counts = defaultdict(int)
+    for h in allfh:
+        if VERB_FH_RE.match(h.mark):
+            counts[h.bin_id] += 1
+    # A complete paradigm can still be the wrong paradigm: "heita" is both
+    # "to be called" (past hét) and "to heat" (past heitti), and both have all
+    # 12 personal forms. Frequency cannot separate them, so the TSV can pin
+    # the sense, and an unpinned tie is reported as ambiguous.
+    ranked = sorted(counts, key=lambda k: -counts[k])
+    ambiguous = len(ranked) > 1 and counts[ranked[0]] == counts[ranked[1]]
+    if force_bin_id:
+        bid = int(force_bin_id)
+    else:
+        bid = ranked[0] if ranked else entry.bin_id
+    try:
+        fh = [h for h in BIN.lookup_variants(entry.ord, "so", ("GM", "FH"))
+              if h.bin_id == bid]
+        vh = [h for h in BIN.lookup_variants(entry.ord, "so", ("GM", "VH"))
+              if h.bin_id == bid]
+    except Exception:
+        fh, vh = [], []
+
+    # Deponent verbs such as ferðast exist only in the middle voice, so the
+    # active paradigm is legitimately empty and MM is the real conjugation.
+    voice, FH_RE, VH_RE, pre = "active", VERB_FH_RE, VERB_VH_RE, "GM"
+    if not any(VERB_FH_RE.match(h.mark) for h in fh):
+        try:
+            fh = [h for h in BIN.lookup_variants(entry.ord, "so", ("MM", "FH"))
+                  if h.bin_id == bid]
+            vh = [h for h in BIN.lookup_variants(entry.ord, "so", ("MM", "VH"))
+                  if h.bin_id == bid]
+        except Exception:
+            fh, vh = [], []
+        voice, FH_RE, VH_RE, pre = "middle", MM_FH_RE, MM_VH_RE, "MM"
+
+    out = {"voice": voice, "ambiguous": bool(ambiguous and not force_bin_id),
+           "candidates": ranked[:4], "pronouns": {"%s%s" % p: PRONOUN[p] for p in PERSONS}}
+    for tense, code in (("present", "NT"), ("past", "ÞT")):
+        out[tense] = {"%s%s" % p: verb_cell(
+            [h for h in fh if h.mark.startswith("%s-FH-%s" % (pre, code))],
+            FH_RE, (p[0], p[1])) for p in PERSONS}
+    for tense, code in (("subj_present", "NT"), ("subj_past", "ÞT")):
+        out[tense] = {"%s%s" % p: verb_cell(
+            [h for h in vh if h.mark.startswith("%s-VH-%s" % (pre, code))],
+            VH_RE, (p[0], p[1])) for p in PERSONS}
+
+    inf = one_form(entry.ord, bid, "GM-NH" if voice == "active" else "MM-NH") \
+        or entry.ord
+    out["infinitive"] = inf
+    out["future"] = {"%s%s" % p: {"form": "%s %s" % (MUNU[p], inf), "freq": 0,
+                                  "variants": []} for p in PERSONS}
+    # BIN distinguishes three: BH-ST is the clipped form (kom), BH-ET the
+    # singular (komdu), BH-FT the plural (komið). Reading ST as the singular
+    # taught "kom!" where a learner should say "komdu!".
+    bh = "GM" if voice == "active" else "MM"
+    out["imperative_clipped"] = one_form(entry.ord, bid, bh + "-BH-ST")
+    out["imperative_sg"] = one_form(entry.ord, bid, bh + "-BH-ET")
+    out["imperative_pl"] = one_form(entry.ord, bid, bh + "-BH-FT")
+    # geta has two supines: getið, and getað for the auxiliary "be able to".
+    out["supine"] = force_supine or one_form(
+        entry.ord, bid, "GM-SAGNB" if voice == "active" else "MM-SAGNB")
+    out["participle_present"] = one_form(entry.ord, bid, "LHNT")
+    out["participle_past"] = one_form(entry.ord, bid, "LHÞT-SB-KK-NFET")
+    out["middle_infinitive"] = one_form(entry.ord, bid, "MM-NH")
+    out["_filled"] = sum(1 for t in ("present", "past", "subj_present", "subj_past")
+                         for k in out[t] if out[t][k])
     return out
 
 
@@ -334,6 +469,8 @@ def main():
     pool_rows = load_tsv("pool.tsv")
     adj_rows = load_tsv("adjectives.tsv") if os.path.exists(
         os.path.join(DATA, "adjectives.tsv")) else []
+    verb_rows = load_tsv("verbs.tsv") if os.path.exists(
+        os.path.join(DATA, "verbs.tsv")) else []
     fam_rows = load_tsv("family.tsv") if os.path.exists(
         os.path.join(DATA, "family.tsv")) else []
     family = defaultdict(list)
@@ -363,23 +500,47 @@ def main():
     # Adjectives promoted to their own deck are no longer support-only entries.
     adj_ids = {r["icelandic"] for r in adj_rows}
     pool_rows = [r for r in pool_rows if r["icelandic"] not in adj_ids]
+    # "vinna" is both a feminine noun (work) and a verb (to work). Using the
+    # spelling as identity silently merged them: one glossary entry, one
+    # progress slot, doubled mastery. Identity is now wordclass + lemma,
+    # while `lemma` stays the thing shown on screen.
+    verb_ids = {r["icelandic"] for r in verb_rows}
+    pool_rows = [r for r in pool_rows if r["icelandic"] not in verb_ids]
     rows = [dict(r, role="deck", wc="noun") for r in deck_rows] + \
            [dict(r, role="deck", wc="adj", pos="lo") for r in adj_rows] + \
+           [dict(r, role="deck", wc="verb", pos="so") for r in verb_rows] + \
            [dict(r, role="part", wc="noun") for r in pool_rows]
 
-    gloss = {r["icelandic"]: {"de": weighted(r["de"]), "en": weighted(r["en"])}
+    for r in rows:
+        r["uid"] = "%s:%s" % (r["wc"] if r["role"] == "deck" else "part",
+                              r["icelandic"])
+    dupes = [u for u, n in Counter(r["uid"] for r in rows).items() if n > 1]
+    if dupes:
+        sys.stderr.write("WARNING: duplicate ids %s\n" % ", ".join(dupes))
+
+    gloss = {r["uid"]: {"de": weighted(r["de"]), "en": weighted(r["en"])}
              for r in rows}
-    pinned = {r["icelandic"]: (r.get("pos") or None) for r in rows}
+    pinned = {r["uid"]: (r.get("pos") or None) for r in rows}
+    # Compound parts resolve to lemmas, and a verb is almost never the
+    # modifier, so nouns and support words win that lookup.
+    PRIORITY = {"part": 0, "noun": 1, "adj": 2, "verb": 3}
+    by_lemma = {}
+    for r in sorted(rows, key=lambda r: PRIORITY[r["wc"] if r["role"] == "deck"
+                                                 else "part"]):
+        by_lemma.setdefault(r["icelandic"], r["uid"])
+    lgloss = {lem: gloss[u] for lem, u in by_lemma.items()}
 
     sys.stderr.write("indexing %d lemmas...\n" % len(rows))
     index = defaultdict(list)
     pos_of = {}
     for r in rows:
         lemma = r["icelandic"]
-        e = head_entry(lemma, pinned.get(lemma))
+        e = head_entry(lemma, pinned.get(r["uid"]))
         if e is None:
             continue
-        pos_of[lemma] = e.ofl
+        pos_of[r["uid"]] = e.ofl
+        if r["wc"] == "verb":
+            continue
         for form, slots in all_forms(e.ord, e.ofl).items():
             index[form].append((lemma, e.ofl, slots))
     sys.stderr.write("%d surface forms indexed\n" % len(index))
@@ -405,18 +566,22 @@ def main():
         out.sort(key=lambda c: c["_r"])
         for c in out:
             c.pop("_r")
-            g = gloss.get(c["lemma"])
+            g = lgloss.get(c["lemma"])
             c["gloss"] = ({"de": g["de"][0]["text"], "en": g["en"][0]["text"]}
                           if g else None)
-            c["has_card"] = c["lemma"] in gloss
+            c["uid"] = by_lemma.get(c["lemma"])
+            c["has_card"] = c["uid"] is not None
         return out
 
     cards = []
     for r in rows:
         word = r["icelandic"]
-        pos = pos_of.get(word)
+        uid = r["uid"]
+        pos = pos_of.get(uid)
         is_adj = r.get("wc") == "adj"
-        para = adj_paradigm(word) if is_adj else paradigm(word, pos)
+        is_verb = r.get("wc") == "verb"
+        para = (verb_paradigm(word, r.get("bin_id"), r.get("supine")) if is_verb else
+                adj_paradigm(word) if is_adj else paradigm(word, pos))
         override = parse_split_override(r.get("split"))
         if override is None:
             parts_raw = [(f, None, False) for f in
@@ -434,8 +599,8 @@ def main():
                 cands = []          # explicit suffix, no lemma to find
             elif forced:
                 # A curator-supplied lemma always wins over the resolver.
-                g = gloss.get(forced)
-                e = head_entry(forced, pinned.get(forced))
+                g = lgloss.get(forced)
+                e = head_entry(forced, pinned.get(by_lemma.get(forced, "")))
                 cands = [{
                     "lemma": forced,
                     "pos": POS_LABEL.get(e.ofl, "?") if e else "?",
@@ -443,7 +608,8 @@ def main():
                     "slot": "set by hand", "case_name": None, "via": "override",
                     "gloss": ({"de": g["de"][0]["text"], "en": g["en"][0]["text"]}
                               if g else None),
-                    "has_card": forced in gloss,
+                    "uid": by_lemma.get(forced),
+                    "has_card": forced in by_lemma,
                 }]
             else:
                 cands = resolve(frag)
@@ -452,18 +618,26 @@ def main():
                           "suffix": bool(is_override and not forced)})
             off += len(frag)
 
-        de1 = gloss[word]["de"][0]["text"]
-        en1 = gloss[word]["en"][0]["text"]
-        claims = [{"id": "gloss", "kind": "gloss", "key": "gloss:" + word,
+        de1 = gloss[uid]["de"][0]["text"]
+        en1 = gloss[uid]["en"][0]["text"]
+        claims = [{"id": "gloss", "kind": "gloss", "key": "gloss:" + uid,
                    "assert": "%s means \u201c%s\u201d / \u201c%s\u201d" % (word, de1, en1)}]
         if para:
             claims.append({"id": "paradigm",
-                           "kind": "adjparadigm" if is_adj else "paradigm",
-                           "key": "paradigm:" + word,
+                           "kind": "verbparadigm" if is_verb else
+                                   "adjparadigm" if is_adj else "paradigm",
+                           "key": "paradigm:" + uid,
                            "assert": "declension of %s is correct" % word})
+        if is_verb and para:
+            claims.append({
+                "id": "principal", "kind": "principal", "key": "principal:" + uid,
+                "assert": "að %s · %s · %s" % (
+                    para["infinitive"],
+                    (para["past"]["1ET"] or {}).get("form", "—"),
+                    para["supine"] or "—")})
         if family.get(word):
             claims.append({
-                "id": "family", "kind": "family", "key": "family:" + word,
+                "id": "family", "kind": "family", "key": "family:" + uid,
                 "assert": "%s is related to %s" % (
                     word, ", ".join(f["word"] for f in family[word]))})
         if is_adj and para:
@@ -471,10 +645,10 @@ def main():
                    ("strong", "comparative", "super_strong")]
             if all(deg):
                 claims.append({"id": "degrees", "kind": "degrees",
-                               "key": "degrees:" + word,
+                               "key": "degrees:" + uid,
                                "assert": "%s, %s, %s" % tuple(x["form"] for x in deg)})
         if parts:
-            claims.append({"id": "split", "kind": "split", "key": "split:" + word,
+            claims.append({"id": "split", "kind": "split", "key": "split:" + uid,
                            "assert": "%s = %s" % (
                                word, " + ".join(p["surface"] for p in parts))})
             for n, p in enumerate(parts):
@@ -504,7 +678,17 @@ def main():
         # count conflates the two. Treat these as evidence, not verdicts.
         sg_total = pl_total = 0
         weak = []
-        if is_adj:
+        if is_verb:
+            if para:
+                for t in ("present", "past"):
+                    for k, v in para[t].items():
+                        if v:
+                            (sg_total, pl_total)  # keep both defined
+                            if k.endswith("ET"):
+                                sg_total += v["freq"]
+                            else:
+                                pl_total += v["freq"]
+        elif is_adj:
             if para:
                 for d in ("strong", "weak", "comparative", "super_strong", "super_weak"):
                     for g, _ in ADJ_GENDERS:
@@ -538,7 +722,7 @@ def main():
             "total": sg_total + pl_total,
             "plural_attested": pl_total > 0,
             "floor_note": True,
-            "plural_rare": (not is_adj) and bool(sg_total)
+            "plural_rare": (not is_adj) and (not is_verb) and bool(sg_total)
                            and pl_total < sg_total * 0.02,
             "outranked": weak,
         }
@@ -547,7 +731,7 @@ def main():
                          if not p["candidates"] and not p.get("suffix"))
         guessed = sum(1 for p in parts if p["candidates"]
                       and p["candidates"][0]["via"] == "umlaut")
-        if is_adj:
+        if is_adj or is_verb:
             variants = 0
             coverage = (para or {}).get("_filled", 0)
         else:
@@ -555,17 +739,19 @@ def main():
                            for c in (para or {}) for k in para[c]
                            if para[c][k]) if para else 0
             coverage = None
-        conf = ("low" if unresolved or guessed or corpus["outranked"] else
+        ambiguous_verb = bool(para and para.get("ambiguous"))
+        conf = ("low" if unresolved or guessed or corpus["outranked"]
+                or ambiguous_verb else
                 "medium" if variants or corpus["plural_rare"]
                 or any(len(p["candidates"]) > 1 for p in parts)
                 else "high")
 
         cards.append({
-            "id": word, "lemma": word, "role": r["role"],
+            "id": uid, "lemma": word, "role": r["role"],
             "wordclass": r.get("wc", "noun"), "coverage": coverage,
             "pos": POS_LABEL.get(pos, "?"),
             "gender": GENDER.get(pos), "gender_short": GENDER_SHORT.get(pos),
-            "glosses": gloss[word],
+            "glosses": gloss[uid],
             "tags": [t for t in (r.get("tags") or "").split(",") if t],
             "note": (r.get("note") or "").strip() or None,
             "family": family.get(word, []),
@@ -584,8 +770,8 @@ def main():
         # A stem appearing twice in one word (barn in barnabarn) is still one
         # word built, so collect distinct compounds rather than occurrences.
         for p in c["compound"]["parts"]:
-            if p["candidates"]:
-                builds[p["candidates"][0]["lemma"]].add(c["id"])
+            if p["candidates"] and p["candidates"][0].get("uid"):
+                builds[p["candidates"][0]["uid"]].add(c["id"])
     for c in cards:
         c["builds"] = sorted(builds.get(c["id"], []))
         c["productivity"] = len(c["builds"])
@@ -596,12 +782,13 @@ def main():
     # which would make the question unanswerable.
     playable = [c for c in cards if c["role"] == "deck"]
     fam_words = {c["id"]: {f["word"] for f in c["family"]} for c in cards}
-    stems = {c["id"]: {p["candidates"][0]["lemma"]
+    stems = {c["id"]: {p["candidates"][0].get("uid")
                        for p in c["compound"]["parts"] if p["candidates"]}
              for c in cards}
     for c in playable:
         mine = {g["text"].lower() for g in c["glosses"]["en"]} | \
                {g["text"].lower() for g in c["glosses"]["de"]}
+        taken0 = set(mine)
         scored = []
         for o in playable:
             if o["id"] == c["id"]:
@@ -624,16 +811,30 @@ def main():
             if c["gender_short"] and c["gender_short"] == o["gender_short"]:
                 s += 0.5
             scored.append((s, o["id"]))
+        # Uniqueness of ids is not enough: vita and þekkja are both "to know",
+        # spila and leika are both "spielen". Two buttons reading the same
+        # makes four choices look like three.
         scored.sort(reverse=True)
-        c["distractors"] = [i for _, i in scored[:10]]
+        picked, taken = [], set(taken0)
+        for _, oid in scored:
+            o = next(x for x in playable if x["id"] == oid)
+            sig = (o["glosses"]["en"][0]["text"].lower(),
+                   o["glosses"]["de"][0]["text"].lower())
+            if sig[0] in taken or sig[1] in taken:
+                continue
+            taken.add(sig[0]); taken.add(sig[1])
+            picked.append(oid)
+            if len(picked) >= 10:
+                break
+        c["distractors"] = picked
 
     # Lemma cards come before the compounds that reference them, so a part
     # claim can honestly say the lemma was confirmed earlier.
     order = {"low": 0, "medium": 1, "high": 2}
     cards.sort(key=lambda c: (c["compound"]["is_compound"],
-                              order[c["confidence"]], c["id"]))
+                              order[c["confidence"]], c["lemma"]))
 
-    validation = {c["id"]: {"pos": c["pos"], "gender": c["gender_short"],
+    validation = {c["lemma"]: {"pos": c["pos"], "gender": c["gender_short"],
                             "gloss": c["glosses"]["en"][0]["text"],
                             "freq": c["corpus"]["total"]} for c in cards}
     forms = {f: sorted({x[0] for x in v}) for f, v in index.items()}
@@ -649,6 +850,18 @@ def main():
     nfam = sum(len(c["family"]) for c in cards)
     print("  %d family links across %d words"
           % (nfam, sum(1 for c in cards if c["family"])))
+    nv = sum(1 for c in cards if c["wordclass"] == "verb")
+    thinv = [c["id"] for c in cards
+             if c["wordclass"] == "verb" and (c["coverage"] or 0) < 24]
+    print("  %d verbs" % nv)
+    print("  incomplete verb conjugations: %s" % (", ".join(thinv) or "none"))
+    amb = [c["lemma"] for c in cards if c["paradigm"]
+           and isinstance(c["paradigm"], dict) and c["paradigm"].get("ambiguous")]
+    print("  AMBIGUOUS verb senses (pin bin_id in verbs.tsv): %s"
+          % (", ".join(amb) or "none"))
+    print("  deponent (middle-voice) verbs: %s" % (", ".join(
+        c["id"] for c in cards if c["wordclass"] == "verb"
+        and c["paradigm"] and c["paradigm"].get("voice") == "middle") or "none"))
     na = sum(1 for c in cards if c["wordclass"] == "adj")
     print("  %d adjectives" % na)
     thin = [c["id"] for c in cards

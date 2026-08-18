@@ -92,6 +92,16 @@ details.more table{font-size:11.5px}
 .famrow .fm{color:var(--muted)}
 .famrow .mm{font-family:var(--mono);font-size:9.5px;color:var(--b);
   border:1px solid var(--line);border-radius:3px;padding:1px 5px}
+.vtab{margin-top:9px;border:1px solid var(--line);border-radius:6px;overflow-x:auto}
+.vtab table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;white-space:nowrap}
+.vtab th{background:var(--panel-2);color:var(--dim);font-weight:500;text-align:left;
+  padding:6px 12px;letter-spacing:.05em;text-transform:uppercase;font-size:9px}
+.vtab td{padding:5px 12px;border-top:1px solid var(--line);color:var(--ink)}
+.vtab td.p{color:var(--b);font-family:var(--serif);font-size:14px}
+.vtab td.fut{color:var(--muted)}
+.vparts{margin-top:9px;display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.vparts b{font-family:var(--serif);font-size:16px;color:var(--ink);font-weight:400}
+.vnote{margin-top:8px;font-family:var(--mono);font-size:10.5px;color:var(--dim)}
 .deriv{margin-top:9px;font-family:var(--mono);font-size:11px;color:var(--muted)}
 .deriv b{color:var(--b);font-weight:500}
 .fix{margin-top:9px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -224,6 +234,37 @@ function claimBody(c,w){
         ${adjTable(p.super_strong,'efsta sterk')}
         ${adjTable(p.super_weak,'efsta veik')}</details>`;
   }
+  if(c.kind==='verbparadigm'){
+    const p=w.paradigm, KEYS=['1ET','2ET','3ET','1FT','2FT','3FT'];
+    const cell=(t,k)=>p[t]&&p[t][k]?cellTxt(p[t][k]):'—';
+    const rows=KEYS.map(k=>`<tr><td class="p">${esc(p.pronouns[k])}</td>
+      <td>${cell('present',k)}</td><td>${cell('past',k)}</td>
+      <td class="fut">${esc(p.future[k].form)}</td></tr>`).join('');
+    const sub=KEYS.map(k=>`<tr><td class="p">${esc(p.pronouns[k])}</td>
+      <td>${cell('subj_present',k)}</td><td>${cell('subj_past',k)}</td></tr>`).join('');
+    return `<div class="txt">conjugation of <span class="lem">${esc(w.lemma)}</span>
+        <span class="sub" style="display:inline">${p.voice==='middle'?'middle voice only (deponent)':'verb'} · ${p._filled} of 24 personal forms</span></div>
+      <div class="vtab"><table>
+        <tr><th></th><th>nútíð — present</th><th>þátíð — past</th><th>framtíð — future</th></tr>
+        ${rows}</table></div>
+      <div class="vparts">
+        <span>nafnháttur <b>að ${esc(p.infinitive)}</b></span>
+        ${p.supine?`<span>sagnbót <b>${esc(p.supine)}</b></span>`:''}
+        ${p.imperative_sg?`<span>boðháttur <b>${esc(p.imperative_sg)}!</b></span>`:''}
+        ${p.participle_present?`<span>lh.nt. <b>${esc(p.participle_present)}</b></span>`:''}
+        ${p.middle_infinitive&&p.voice!=='middle'?`<span>miðmynd <b>${esc(p.middle_infinitive)}</b></span>`:''}
+      </div>
+      <div class="vnote">Future is built, not inflected: munu + infinitive. Everyday speech more often uses ætla að.</div>
+      <details class="more" data-stop="1"><summary>viðtengingarháttur (subjunctive)</summary>
+        <div class="vtab"><table><tr><th></th><th>nútíð</th><th>þátíð</th></tr>${sub}</table></div></details>`;
+  }
+  if(c.kind==='principal'){
+    const d=c.assert.split(' · ');
+    return `<div class="txt">principal parts</div><div class="degs">
+      <b>${esc(d[0])}</b><span>nafnháttur</span>
+      <b>${esc(d[1])}</b><span>þátíð, ég</span>
+      <b>${esc(d[2])}</b><span>sagnbót</span></div>`;
+  }
   if(c.kind==='degrees'){
     const d=c.assert.split(', ');
     return `<div class="txt">comparison</div><div class="degs">
@@ -283,7 +324,7 @@ function draw(){
   }).join('');
 
   $('card').innerHTML=hero+
-    `<div class="meta">${w.gender?`<span class="g">${esc(w.gender)}</span>`:(w.wordclass==='adj'?'<span class="g">adjective</span>':`<span class="nonoun">${esc(w.pos)} — support word, not in the deck</span>`)}${w.tags.length?' · '+esc(w.tags.join(' · ')):''}</div>`+
+    `<div class="meta">${w.gender?`<span class="g">${esc(w.gender)}</span>`:(w.wordclass==='adj'?'<span class="g">adjective</span>':w.wordclass==='verb'?'<span class="g">verb</span>':`<span class="nonoun">${esc(w.pos)} — support word, not in the deck</span>`)}${w.tags.length?' · '+esc(w.tags.join(' · ')):''}</div>`+
     (w.note?`<div class="note">${esc(w.note)}</div>`:'')+
     `<div class="claims">${claims}</div>`;
   $('kind').textContent=w.compound.is_compound?'compound':'simplex';
