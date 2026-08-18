@@ -1,22 +1,25 @@
 # íslenska
 
-A small vocabulary game for learning Icelandic nouns and adjectives, with
-German and English glosses.
+A vocabulary game for learning Icelandic nouns and adjectives, with German and
+English glosses.
 
 **Play:** https://bjarkifreyr95.github.io/islenska/
 
 The point of it is compounds. Icelandic builds most of its vocabulary by
 joining words together, so once you know `hús` and `sjúkur` you have most of
-`sjúkrahús` already. Every compound in the game breaks apart after you answer,
-and adjectives show the noun they came from and the verb built on top.
+`sjúkrahús` already. Every compound breaks apart after you answer, and
+adjectives show the noun they came from and the verb built on top.
 
 ## What is here
 
 | path | what it is |
 |---|---|
-| `index.html` | the game — one self-contained file, no server, works offline |
+| `index.html` | the game — one file, no external requests, works offline |
 | `review.html` | curation tool for checking generated data before it ships |
 | `source/` | everything needed to rebuild the two files above |
+
+Neither page loads fonts, scripts or anything else from the network. Nothing is
+sent anywhere, and progress never leaves the browser.
 
 ## Rebuilding
 
@@ -28,43 +31,58 @@ python make_game.py     # -> game.html    (rename to ../index.html to publish)
 python make_review.py   # -> review.html
 ```
 
-`build.py` pulls declensions and compound analysis from
-[BÍN](https://bin.arnastofnun.is/) via the `islenska` package, and corpus
-frequencies from the Icelandic Gigaword Corpus via `icegrams`. Both ship their
-data offline, so no network access is needed.
+`build.py` takes declensions and compound analysis from
+[BÍN](https://bin.arnastofnun.is/) via `islenska`, and corpus frequencies from
+the Icelandic Gigaword Corpus via `icegrams`. Both ship their data offline.
 
 ## Editing the vocabulary
 
-Edit only the TSV files. Everything else is generated and will be overwritten.
+Edit only the TSV files. Everything else is generated and gets overwritten.
 
 | file | holds |
 |---|---|
-| `source/data/words.tsv` | nouns in the deck |
-| `source/data/adjectives.tsv` | adjectives in the deck |
-| `source/data/pool.tsv` | words that only appear inside compounds, glossed but not drilled |
+| `source/data/words.tsv` | nouns |
+| `source/data/adjectives.tsv` | adjectives |
+| `source/data/pool.tsv` | words that only appear inside compounds |
 | `source/data/family.tsv` | related words: adjective → noun / verb |
 
-Columns are tab-separated. `de` and `en` accept several senses separated by
-`|`, first one primary. The `note` column is free text shown on the card, for
-anything the pipeline cannot work out on its own.
+`de` and `en` take several senses separated by `|`, first one primary. `note`
+is free text shown on the card.
 
-`family.tsv` is `lemma, related, pos, de, en, rel`, where `rel` is `noun`,
-`verb` or `stem`. Every row is checked against BÍN at build time and anything
-unfindable is printed as a warning.
+### Overriding a compound split
 
-## Reviewing generated data
+The `split` column overrides the automatic analysis when it gets a word wrong:
 
-Open `review.html` and go through the cards. Each one makes a list of numbered
-claims — meaning, declension, how a compound splits, which lemma each part
-comes from. Everything starts accepted; press a number to reject one and add a
-correction. Cards are sorted worst-confidence first, so if you stop halfway
-you have already seen everything doubtful.
+| value | meaning |
+|---|---|
+| *(empty)* | analyse automatically |
+| `none` | treat as a simple word, never split |
+| `far=för sími=sími` | use these fragments, with these lemmas |
+| `hring=hringur laga=-` | `-` marks a derivational suffix, not a word |
+
+The fragments must join back into the original word; the build warns if they
+do not.
 
 ## Progress
 
-The game keeps progress in the player's own browser. There is no account and
-nothing is sent anywhere. *Save / load progress* on the summary screen gives
-copyable text for moving between devices.
+Progress saves automatically in the player's browser. If the browser refuses to
+store data — private windows usually do — the settings screen says so rather
+than failing silently.
+
+Each word has a strength from 0 to 5, and the mastery bar is the sum of those
+across the deck. A correct answer adds one, a wrong answer removes one, and
+nothing is retired until the player chooses to retire it: at full strength the
+game offers to mark it learnt, and *My progress* lets them mark or un-mark
+anything by hand. Marking by hand also sets strength to 5, so the two numbers
+never contradict each other. Compounds earn strength only for themselves, never
+for their parts.
+
+Round length counts answered questions, not distinct words, so 12 means exactly
+12 and a small lane simply cycles round again.
+
+*My progress* has two views: a flat word list, and **word families**, which
+groups every stem with the longer words built from it and shows how many of
+them you have met.
 
 ## Credits
 

@@ -4,19 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f151b">
-<title>Orðaleikur — Icelandic nouns</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Orðaleikur — Icelandic vocabulary</title>
 <style>
 :root{
   --ground:#0f151b; --panel:#17202a; --panel-2:#1d2833; --line:#26323e;
   --ink:#e6eef4; --muted:#8095a4; --dim:#5b6c7a;
   --a:#74b9d8; --b:#e0a860; --c:#b491d6;
   --ok:#57bf92; --no:#e2685f;
-  --ui:"Space Grotesk",system-ui,-apple-system,sans-serif;
-  --serif:"Newsreader",Georgia,serif;
-  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  /* System stacks only: no external requests, so the file really is
+     self-contained and works with no network at all. */
+  --ui:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
@@ -120,6 +119,117 @@ h1{font-family:var(--serif);font-weight:400;font-size:34px;margin:0 0 4px;letter
 .intro p{color:var(--muted);font-size:14.5px;line-height:1.6;margin:0 0 14px}
 .intro .box{background:var(--panel);border:1px solid var(--line);border-radius:9px;
   padding:14px 16px;margin-bottom:14px}
+.ripe{margin-top:14px;border:1px solid #2c5545;background:#152a22;border-radius:9px;padding:13px 15px}
+.ripe .rtxt{font-size:14.5px;color:var(--ink);line-height:1.45;margin-bottom:11px}
+.ripe .rtxt b{font-family:var(--serif);font-size:17px;font-weight:400;color:var(--ok)}
+.ripe .rbtns{display:flex;gap:8px;flex-wrap:wrap}
+.ripe button{background:var(--panel-2);border:1px solid var(--line);border-radius:7px;
+  padding:9px 14px;font-size:13.5px;font-weight:500}
+.ripe #markyes{border-color:#2c5545;color:var(--ok)}
+.ripe button:hover{border-color:var(--muted)}
+
+/* strength meter */
+.meter{margin-top:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pips{display:flex;gap:5px}
+.pip{width:26px;height:7px;border-radius:4px;background:var(--line);transition:background .3s ease}
+.pip.on{background:var(--ok)}
+.pip.gain{background:var(--ok);animation:pop .45s ease}
+.pip.loss{background:var(--no)}
+@keyframes pop{0%{transform:scaleX(.3);opacity:.4}100%{transform:scaleX(1);opacity:1}}
+.meter .mtxt{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.meter .mtxt b{color:var(--ink);font-weight:500}
+.markbtn{display:block;width:100%;margin-top:12px;padding:14px;border-radius:9px;
+  font-size:15px;font-weight:600;color:#0f151b;background:var(--ok);
+  box-shadow:0 0 0 0 rgba(87,191,146,.55);animation:glow 1.8s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(87,191,146,.5)}
+  50%{box-shadow:0 0 18px 5px rgba(87,191,146,.28)}}
+.keepbtn{display:block;width:100%;margin-top:7px;padding:11px;border-radius:9px;
+  background:var(--panel-2);border:1px solid var(--line);font-size:13.5px}
+.keepbtn:hover{border-color:var(--muted)}
+
+/* flag language toggle */
+.flag{width:30px;height:21px;border-radius:3px;overflow:hidden;display:block;
+  border:1px solid var(--line);flex:none}
+.flagbtn{padding:0;line-height:0;border-radius:3px}
+.flagbtn:hover .flag{border-color:var(--muted)}
+
+/* round length segmented control on the menu */
+.lenbar{display:flex;gap:6px;margin:0 0 18px}
+.lenbar button{flex:1;background:var(--panel);border:1px solid var(--line);
+  border-radius:9px;padding:11px 8px;font-size:13.5px;font-weight:500}
+.lenbar button.on{border-color:var(--a);color:var(--a);background:var(--panel-2)}
+.lenbar button span{display:block;font-family:var(--mono);font-size:9.5px;
+  color:var(--dim);margin-top:3px;font-weight:400}
+
+/* xp bar */
+.xp{margin:2px 0 20px}
+.xprow{display:flex;justify-content:space-between;align-items:baseline;
+  font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:6px}
+.xprow b{color:var(--ink);font-weight:500;font-size:13px}
+.xptrack{height:9px;background:var(--panel);border:1px solid var(--line);
+  border-radius:6px;overflow:hidden}
+.xptrack i{display:block;height:100%;
+  background:linear-gradient(90deg,var(--a),var(--ok));width:0;transition:width .5s ease}
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:20px}
+.pill b{color:var(--b)}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:14px}
+.stat b{display:block;font-size:26px;font-weight:500;margin-bottom:3px}
+.stat span{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.4}
+.stat.ok b{color:var(--ok)} .stat.a b{color:var(--a)}
+.newlist{font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:1.8;
+  margin-bottom:20px}
+.newlist b{color:var(--ok);font-weight:500}
+.stophere{font-family:var(--mono);font-size:11px;color:var(--dim);
+  border:1px solid var(--line);border-radius:6px;padding:6px 11px}
+.stophere:hover{color:var(--ink);border-color:var(--muted)}
+
+.warnbar{background:#33261a;border:1px solid #5a4227;color:var(--b);border-radius:8px;
+  padding:10px 13px;font-size:13px;line-height:1.45;margin-bottom:16px}
+
+.setrow{display:flex;align-items:center;gap:12px;padding:13px 15px;background:var(--panel);
+  border:1px solid var(--line);border-radius:9px;margin-bottom:8px}
+.setrow .st{flex:1;min-width:0}
+.setrow .st b{display:block;font-weight:500;font-size:14.5px;margin-bottom:2px}
+.setrow .st span{font-size:12.5px;color:var(--muted)}
+.seg2{display:flex;gap:5px;flex-wrap:wrap}
+.seg2 button{background:var(--panel-2);border:1px solid var(--line);border-radius:7px;
+  padding:7px 12px;font-family:var(--mono);font-size:12px}
+.seg2 button.on{border-color:var(--a);color:var(--a)}
+
+.wl{display:grid;gap:3px}
+.wlrow{display:flex;align-items:center;gap:11px;padding:9px 12px;background:var(--panel);
+  border:1px solid transparent;border-radius:7px;text-align:left;width:100%}
+.wlrow:hover{border-color:var(--line)}
+.wlrow .ww{font-family:var(--serif);font-size:17px;flex:none;min-width:130px}
+.wlrow .wm{flex:1;min-width:0;color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wlrow .ws{font-family:var(--mono);font-size:10px;color:var(--dim);flex:none}
+.wlrow.done{opacity:.55}
+.wlrow.done .ww{color:var(--ok)}
+.wlrow .box{width:15px;height:15px;border:1px solid var(--line);border-radius:4px;flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--ok)}
+.wlrow.done .box{border-color:var(--ok)}
+.filt{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.filt button{background:var(--panel-2);border:1px solid var(--line);border-radius:7px;
+  padding:6px 11px;font-family:var(--mono);font-size:11px}
+.filt button.on{border-color:var(--a);color:var(--a)}
+.fam-g{margin-bottom:20px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.fam-h{display:flex;align-items:center;gap:11px;padding:12px 14px;background:var(--panel-2)}
+.fam-h .fw{font-family:var(--serif);font-size:22px;color:var(--a);flex:none}
+.fam-h .fm{flex:1;min-width:0;color:var(--muted);font-size:13px}
+.fam-h .stars{font-family:var(--mono);font-size:12px;color:var(--ok);letter-spacing:1px;flex:none}
+.fam-b{padding:4px 0}
+.fam-i{display:flex;align-items:center;gap:10px;padding:8px 14px;width:100%;text-align:left;background:none}
+.fam-i:hover{background:var(--panel-2)}
+.fam-i .tick{width:14px;flex:none;color:var(--dim);font-size:11px}
+.fam-i.got .tick{color:var(--ok)}
+.fam-i .cw{font-family:var(--serif);font-size:16px;flex:none;min-width:120px}
+.fam-i.got .cw{color:var(--ok)}
+.fam-i .lit{font-family:var(--mono);font-size:10.5px;color:var(--dim);flex:1;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fam-i .cm{color:var(--muted);font-size:12.5px;flex:none}
+.fam-f{padding:8px 14px 11px;font-family:var(--mono);font-size:10.5px;color:var(--dim);
+  border-top:1px solid var(--line)}
+
 .intro .box .rt{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
   text-transform:uppercase;color:var(--dim);margin-bottom:9px}
 .note{margin-top:10px;font-size:13px;color:var(--muted);line-height:1.45;
@@ -155,16 +265,18 @@ footer .spacer{flex:1}
 </head>
 <body>
 <div class="top">
+  <button class="flagbtn" id="lang" title="switch language"></button>
   <button class="back" id="back" hidden>← back</button>
   <span class="spacer"></span>
+  <button class="stophere" id="stop" hidden>stop here</button>
   <span class="pill" id="pill"></span>
 </div>
 <div class="bar"><i id="bar"></i></div>
 <main><div class="wrap" id="app"></div></main>
 <footer>
-  <button class="tog" id="lang">glosses <b>DE</b></button>
+  <button class="tog" id="words">all words</button>
   <span class="spacer"></span>
-  <button class="tog" id="reset">reset progress</button>
+  <button class="tog" id="settings">settings</button>
 </footer>
 
 <script>
@@ -176,6 +288,17 @@ const GENDER_NAME={m:['karlkyn','masculine','maskulin'],
 const DEGREE_NAME={0:['frumstig','positive','Grundstufe'],
                    1:['miðstig','comparative','Komparativ'],
                    2:['efsta stig','superlative','Superlativ']};
+const FLAG={
+ de:`<svg class="flag" viewBox="0 0 5 3"><rect width="5" height="3" fill="#000"/>
+   <rect y="1" width="5" height="1" fill="#D00"/><rect y="2" width="5" height="1" fill="#FFCE00"/></svg>`,
+ en:`<svg class="flag" viewBox="0 0 60 36"><rect width="60" height="36" fill="#012169"/>
+   <path d="M0 0l60 36M60 0L0 36" stroke="#fff" stroke-width="7"/>
+   <path d="M0 0l60 36M60 0L0 36" stroke="#C8102E" stroke-width="4"/>
+   <path d="M30 0v36M0 18h60" stroke="#fff" stroke-width="12"/>
+   <path d="M30 0v36M0 18h60" stroke="#C8102E" stroke-width="7"/></svg>`};
+const MAXSTR=5;
+const xpNow=()=>W.reduce((t,w)=>t+Math.min(MAXSTR,strength(w.id)),0);
+const xpMax=()=>W.length*MAXSTR;
 const gname=g=>GENDER_NAME[g][0]+' — '+(P.lang==='de'?GENDER_NAME[g][2]:GENDER_NAME[g][1]);
 const dname=i=>DEGREE_NAME[i][0]+' · '+(P.lang==='de'?DEGREE_NAME[i][2]:DEGREE_NAME[i][1]);
 const pickDemo=g=>{const a=DEMO[g]||[];return a.length?a[Math.floor(Math.random()*a.length)]:null;};
@@ -185,13 +308,26 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 
 /* ---------- progress ---------- */
 const KEY='ordaleikur.v1';
-let P={lang:'de', intro:false, s:{}};        // s[id] = {n: seen, k: correct streak, str: 0..5}
-try{ const raw=localStorage.getItem(KEY); if(raw) P=Object.assign(P,JSON.parse(raw)); }catch(e){}
-function save(){ try{ localStorage.setItem(KEY,JSON.stringify(P)); }catch(e){} }
-const st=id=>P.s[id]||(P.s[id]={n:0,k:0,str:0});
+// s[id] = {n: times seen, k: correct streak, str: 0..5, m: marked learnt}
+let P={lang:'de', intro:false, len:12, s:{}};
+let STORAGE_OK=false;
+try{                                    // prove the browser will actually keep it
+  localStorage.setItem(KEY+'.probe','1');
+  STORAGE_OK = localStorage.getItem(KEY+'.probe')==='1';
+  localStorage.removeItem(KEY+'.probe');
+  const raw=localStorage.getItem(KEY);
+  if(raw) P=Object.assign(P,JSON.parse(raw));
+}catch(e){ STORAGE_OK=false; }
+function save(){
+  if(!STORAGE_OK) return;
+  try{ localStorage.setItem(KEY,JSON.stringify(P)); }catch(e){ STORAGE_OK=false; }
+}
+const st=id=>P.s[id]||(P.s[id]={n:0,k:0,str:0,m:false});
 const strength=id=>(P.s[id]||{}).str||0;
-const known=id=>strength(id)>=3;          // recognised well enough to be used as a hint
-const learnt=id=>strength(id)>=5;
+const known=id=>strength(id)>=3||learnt(id);   // good enough to use as a hint
+const learnt=id=>!!(P.s[id]&&P.s[id].m);          // explicitly marked done
+const ripe=id=>strength(id)>=5;                    // eligible to be marked
+const active=id=>!learnt(id);
 const gloss=w=>(P.lang==='de'?w.de:w.en)[0];
 const glossOf=id=>byId[id]?gloss(byId[id]):(SUP[id]?SUP[id][P.lang]:id);
 
@@ -234,22 +370,31 @@ const THEMES=[
 ];
 let theme=THEMES[0];
 const pool=l=>W.filter(theme.pick).filter(l.pick).sort(l.sort);
+const poolActive=l=>pool(l).filter(w=>active(w.id));
 
 /* ---------- state ---------- */
 let view='menu', lane=null, queue=[], q=null, answered=false, chosen=null, last=null;
 let session={asked:0, right:0, newly:[]};
 
+function xpBar(){
+  const now=xpNow(), max=xpMax();
+  return `<div class="xp"><div class="xprow">
+      <span>mastery <b>${now}</b> of ${max}</span>
+      <span>${Math.round(now/max*100)}%</span></div>
+    <div class="xptrack"><i style="width:${(now/max*100).toFixed(1)}%"></i></div></div>`;
+}
+
 function setBar(p){ $('bar').style.width=(p*100)+'%'; }
 function pill(){
   const l=W.filter(w=>learnt(w.id)).length;
   $('pill').innerHTML=view==='play'
-    ? `${session.right}/${session.asked} · <b>${l}</b> learnt`
+    ? `${session.right}/${session.asked}${session.streak>2?` · <b>${session.streak} in a row</b>`:''}`
     : `<b>${l}</b> / ${W.length} learnt`;
 }
 
 /* ---------- menu ---------- */
 function drawMenu(){
-  view='menu'; lane=null; $('back').hidden=true; setBar(0);
+  view='menu'; lane=null; $('back').hidden=true; $('stop').hidden=true; setBar(0);
   const blocks=THEMES.map(th=>{
     const prev=theme; theme=th;
     const rows=th.lanes.map(l=>{
@@ -262,9 +407,18 @@ function drawMenu(){
     theme=prev;
     return `<div class="section">${esc(th.sub)}</div><div class="lanes">${rows}</div>`;
   }).join('');
+  const lens=[[12,'12','short'],[30,'30','longer'],[0,'endless','no limit']];
   $('app').innerHTML=`<h1>Orðaleikur</h1>
     <p class="sub">Icelandic words. Pick the meaning — and when a word is built
     from smaller ones, see exactly which.</p>
+    ${xpBar()}
+    <button class="lane" id="progress" style="margin-bottom:18px">
+      <span class="ico">◈</span>
+      <span class="t"><b>My progress</b><span>Every word, what you have marked learnt, and your totals.</span></span>
+      <span class="n">${W.filter(w=>learnt(w.id)).length}/${W.length}</span></button>
+    <div class="section">Round length</div>
+    <div class="lenbar" id="lenbar">${lens.map(([v,l,s])=>
+      `<button data-len="${v}" class="${P.len===v?'on':''}">${l}<span>${s}</span></button>`).join('')}</div>
     ${blocks}
     <div class="section">Later</div>
     <div class="lanes">
@@ -273,6 +427,9 @@ function drawMenu(){
       <div class="lane locked"><span class="ico">◇</span>
         <span class="t"><b>Everyday phrases</b><span>Ordering, feelings, describing things</span></span></div>
     </div>`;
+  $('progress').onclick=drawWords;
+  $('lenbar').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    P.len=+b.dataset.len; save(); drawMenu(); });
   $('app').querySelectorAll('[data-lane]').forEach(b=>b.onclick=()=>{
     theme=THEMES.find(t=>t.id===b.dataset.theme);
     start(theme.lanes.find(l=>l.id===b.dataset.lane));
@@ -306,18 +463,27 @@ function introHTML(){
 }
 
 function start(l){
-  lane=l; view='play'; $('back').hidden=false;
+  lane=l;
   if(theme.id==='adj' && !P.intro){
+    view='intro'; $('back').hidden=false; $('stop').hidden=true;
     $('app').innerHTML=introHTML();
     $('gotit').onclick=()=>{ P.intro=true; save(); start(l); };
     setBar(0); return;
   }
-  session={asked:0,right:0,newly:[]};
-  const p=pool(l);
-  // Weakest and least-seen first, but never the same word twice running.
-  queue=p.slice().sort((a,b)=>strength(a.id)-strength(b.id)||st(a.id).n-st(b.id).n)
-        .slice(0,12);
+  view='play'; $('back').hidden=true;
+  session={asked:0,right:0,newly:[],ripe:[],fresh:[],streak:0,best:0};
+  refill();
+  if(!queue.length) return summary();
+  $('stop').hidden=false;
   next();
+}
+
+function refill(){
+  // Round length counts ANSWERS, not distinct words. Small lanes would
+  // otherwise end early (Building blocks has 18 words, so "30" gave 18
+  // questions) and a wrong answer would push a 12-round to 13.
+  const p=poolActive(lane);
+  queue=p.slice().sort((a,b)=>strength(a.id)-strength(b.id)||st(a.id).n-st(b.id).n);
 }
 
 function pickDistractors(w,n){
@@ -333,7 +499,9 @@ function pickDistractors(w,n){
 }
 
 function next(){
-  if(!queue.length) return summary();
+  if(P.len>0 && session.asked>=P.len) return summary();
+  if(!queue.length) refill();                   // cycle small lanes round again
+  if(!queue.length) return summary();           // nothing left to practise
   let w=queue.shift();
   if(w.id===last && queue.length){ queue.push(w); w=queue.shift(); }
   last=w.id;
@@ -364,7 +532,8 @@ function drawQ(){
     <div id="after"></div>`;
   if(answered) paintAnswered();
   else $('app').querySelectorAll('.opt').forEach(b=>b.onclick=()=>answer(b.dataset.id));
-  setBar(session.asked/(session.asked+queue.length+1));
+  setBar(P.len>0 ? session.asked/P.len
+                 : session.asked/(session.asked+queue.length+1));
   pill();
 }
 
@@ -383,7 +552,31 @@ function paintAnswered(){
   });
   $('app').querySelector('.qword').innerHTML=wordHTML(w);
   $('app').querySelector('.qhint').textContent='';
-  $('after').innerHTML=breakdown(w)+`<button class="next" id="nx">Next</button>`;
+  const offer = ripe(w.id) && !learnt(w.id);
+  const d=q.delta||{from:strength(w.id),to:strength(w.id)};
+  const pips=[1,2,3,4,5].map(i=>{
+    const on=i<=d.to;
+    const cls = on ? (i===d.to && d.to>d.from ? 'pip on gain' : 'pip on')
+                   : (i===d.from && d.to<d.from ? 'pip loss' : 'pip');
+    return `<span class="${cls}"></span>`;
+  }).join('');
+  const moved = d.to>d.from ? `${d.from} → <b>${d.to}</b> of 5`
+              : d.to<d.from ? `${d.from} → <b>${d.to}</b> of 5`
+              : `<b>${d.to}</b> of 5`;
+  $('after').innerHTML=
+    `<div class="meter"><span class="pips">${pips}</span>
+      <span class="mtxt">${moved}</span></div>`+
+    breakdown(w)+
+    (offer?`<div id="ripe">
+      <button class="markbtn" id="markyes">Mark ${esc(w.id)} as learnt</button>
+      <button class="keepbtn" id="markno">Keep practising it</button></div>`:'')+
+    `<button class="next" id="nx">Next</button>`;
+  if(offer){
+    $('markyes').onclick=()=>{ st(w.id).m=true;
+      if(!session.newly.includes(w.id)) session.newly.push(w.id);
+      save(); next(); };
+    $('markno').onclick=()=>{ st(w.id).str=3; save(); $('ripe').remove(); };
+  }
   $('nx').onclick=next;
 }
 
@@ -391,9 +584,16 @@ function answer(id){
   if(answered) return;
   answered=true; chosen=id;
   const {w}=q, right=id===w.id, s=st(w.id);
+  if(s.n===0 && !session.fresh.includes(w.id)) session.fresh.push(w.id);
+  const before=s.str;
   s.n++;
-  if(right){ s.k++; s.str=Math.min(5,s.str+1); session.right++; if(s.str===5) session.newly.push(w.id); }
+  if(right){ s.k++; s.str=Math.min(MAXSTR,s.str+1); session.right++;
+    session.streak++; if(session.streak>session.best) session.best=session.streak; }
+  else session.streak=0;
+  if(right){
+    if(s.str>=5 && !s.m && !session.ripe.includes(w.id)) session.ripe.push(w.id); }
   else{ s.k=0; s.str=Math.max(0,s.str-1); queue.push(w); }
+  q.delta={from:before,to:s.str};
   session.asked++; save();
 
   paintAnswered();
@@ -421,13 +621,16 @@ function breakdown(w){
   }
   if(w.parts.length){
     const pieces=w.parts.map((p,n)=>{
+      if(p.suffix) return `<div class="piece p${n%3}">
+        <span class="w">-${esc(p.surface)}</span>
+        <span class="m">ending, not a word on its own</span></div>`;
       const kn=p.lemma&&byId[p.lemma]&&known(p.lemma);
       const meaning=p[P.lang]||'';
       return `<div class="piece p${n%3}"><span class="w">${esc(p.lemma||p.surface)}</span>
         <span class="m">${esc(meaning)}</span>
         ${kn?'<span class="known">known</span>':''}</div>`;
     }).join('');
-    const lit=w.parts.map(p=>p[P.lang]||p.surface).join(' + ');
+    const lit=w.parts.map(p=>p.suffix?'-'+p.surface:(p[P.lang]||p.surface)).join(' + ');
     html+=`<div class="reveal"><div class="rt">built from</div>
       <div class="pieces">${pieces}</div>
       <div class="litc">literally <b>${esc(lit)}</b> — ${esc(gloss(w))}</div>
@@ -449,40 +652,153 @@ function breakdown(w){
 }
 
 function summary(){
-  view='summary'; setBar(1);
-  const nw=session.newly;
+  view='summary'; setBar(1); $('stop').hidden=true; $('back').hidden=false;
+  const nw=session.newly, ripeLeft=session.ripe.filter(id=>!learnt(id)&&ripe(id));
   $('app').innerHTML=`<div class="sum"><h2>Vel gert</h2>
-    <p>${nw.length?`${nw.length} new word${nw.length>1?'s':''} learnt: ${nw.map(esc).join(', ')}`:'Keep going — repetition is doing the work.'}</p>
-    <div class="stats"><div class="ok"><b>${session.right}</b>correct</div>
-      <div><b>${session.asked}</b>answered</div></div>
+    <p>${session.right} of ${session.asked} correct this round.</p></div>
+    ${xpBar()}
+    <div class="statgrid">
+      <div class="stat a"><b>${session.fresh.length}</b><span>new words met</span></div>
+      <div class="stat ok"><b>${nw.length}</b><span>marked complete</span></div>
+      <div class="stat"><b>${W.filter(w=>learnt(w.id)).length}</b><span>complete in total</span></div>
+      <div class="stat"><b>${ripeLeft.length}</b><span>at full strength, not yet marked</span></div>
+      <div class="stat a"><b>${session.best}</b><span>best run of correct answers</span></div>
+      <div class="stat"><b>${session.fresh.length?Math.round(session.right/session.asked*100):0}%</b><span>accuracy this round</span></div>
+    </div>
+    ${nw.length?`<div class="newlist">marked this round<br>${nw.map(x=>'<b>'+esc(x)+'</b>').join(' · ')}</div>`:''}
+    ${ripeLeft.length?`<div class="newlist">ready to mark, in All words<br>${ripeLeft.map(esc).join(' · ')}</div>`:''}
     <div class="row"><button id="again">Another round</button>
-      <button id="menu">Back to menu</button>
-      <button id="exp">Save / load progress</button></div>
-    <div id="iobox"></div></div>`;
+      <button id="menu">Back to menu</button></div>`;
   $('again').onclick=()=>start(lane);
   $('menu').onclick=drawMenu;
-  $('exp').onclick=io;
   pill();
 }
 
-function io(){
-  $('iobox').innerHTML=`<textarea class="io" id="iot" spellcheck="false"></textarea>
-    <div class="row" style="margin-top:8px"><button id="ld">Load from box</button></div>
-    <div class="tiny">Copy this to move progress to another device, or paste some in and load it.</div>`;
-  $('iot').value=JSON.stringify(P);
-  $('ld').onclick=()=>{
-    try{ const v=JSON.parse($('iot').value);
-      if(v&&v.s){ P=Object.assign({lang:'de',s:{}},v); save(); drawMenu(); } }
-    catch(e){ $('iot').value='could not read that — expected the JSON from this box'; }
-  };
+
+function drawSettings(){
+  view='settings'; $('back').hidden=false; $('stop').hidden=true; setBar(0);
+  const lens=[[12,'12'],[30,'30'],[0,'endless']];
+  $('app').innerHTML=`<h1>Settings</h1>
+    ${STORAGE_OK?'':`<div class="warnbar">This browser will not let the page store
+      anything, so progress lasts only until you close the tab. Private or
+      incognito windows usually cause this.</div>`}
+    <div class="setrow"><span class="st"><b>Round length</b>
+      <span>How many words before the round ends.</span></span>
+      <span class="seg2" id="lenseg">${lens.map(([v,l])=>
+        `<button data-len="${v}" class="${P.len===v?'on':''}">${l}</button>`).join('')}</span></div>
+    <div class="setrow"><span class="st"><b>Glosses</b>
+      <span>Language the meanings are shown in.</span></span>
+      <span class="seg2" id="langseg">
+        <button data-lang="de" class="${P.lang==='de'?'on':''}">DE</button>
+        <button data-lang="en" class="${P.lang==='en'?'on':''}">EN</button></span></div>
+    <div class="setrow"><span class="st"><b>Saving</b>
+      <span>${STORAGE_OK?'Progress is saved in this browser automatically.':'Not available here.'}</span></span>
+      <span class="seg2"><button id="wipe">Reset all</button></span></div>`;
+  $('lenseg').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    P.len=+b.dataset.len; save(); drawSettings(); });
+  $('langseg').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    P.lang=b.dataset.lang; save(); syncLang(); drawSettings(); });
+  $('wipe').onclick=()=>{ if(confirm('Erase all progress?')){
+    P={lang:P.lang,intro:P.intro,len:P.len,s:{}}; save(); drawMenu(); } };
+  pill();
 }
 
+let wlFilter='all', wlMode='list';
+
+/* Which deck words each stem builds, so progress can be shown as collections
+   rather than a flat list of 139 items. */
+const COLLECT=(()=>{
+  const m={};
+  W.forEach(w=>w.parts.forEach(p=>{
+    if(!p.lemma||p.suffix) return;
+    (m[p.lemma]=m[p.lemma]||new Set()).add(w.id);
+  }));
+  return Object.entries(m)
+    .map(([stem,set])=>({stem, words:[...set].sort()}))
+    .filter(c=>c.words.length>0)
+    .sort((a,b)=>b.words.length-a.words.length||a.stem.localeCompare(b.stem));
+})();
+
+const stemMeaning=s=>byId[s]?gloss(byId[s]):(SUP[s]?SUP[s][P.lang]:'');
+const stemStr=s=>byId[s]?Math.min(MAXSTR,strength(s)):null;
+
+function drawCollections(){
+  const groups=COLLECT.map(c=>{
+    const got=c.words.filter(id=>strength(id)>0||learnt(id)).length;
+    const ss=stemStr(c.stem);
+    const rows=c.words.map(id=>{
+      const w=byId[id], seen=strength(id)>0||learnt(id);
+      const lit=w.parts.map(p=>p.suffix?'-'+p.surface:(p[P.lang]||p.surface)).join(' + ');
+      return `<button class="fam-i ${seen?'got':''}" data-w="${esc(id)}">
+        <span class="tick">${seen?'✓':'○'}</span>
+        <span class="cw">${esc(id)}</span>
+        <span class="lit">${esc(lit)}</span>
+        <span class="cm">${seen?esc(gloss(w)):'—'}</span></button>`;
+    }).join('');
+    return `<div class="fam-g">
+      <div class="fam-h"><span class="fw">${esc(c.stem)}</span>
+        <span class="fm">${esc(stemMeaning(c.stem))}</span>
+        <span class="stars">${ss===null?'':'★'.repeat(ss)+'☆'.repeat(MAXSTR-ss)}</span></div>
+      <div class="fam-b">${rows}</div>
+      <div class="fam-f">${got} of ${c.words.length} built words met</div></div>`;
+  }).join('');
+  return groups;
+}
+function drawWords(){
+  view='words'; $('back').hidden=false; $('stop').hidden=true; setBar(0);
+  const filters=[['all','all'],['learning','in progress'],['done','learnt'],['new','not started']];
+  const rows=W.filter(w=>{
+    const s=P.s[w.id];
+    if(wlFilter==='done') return learnt(w.id);
+    if(wlFilter==='new') return !s||!s.n;
+    if(wlFilter==='learning') return s&&s.n&&!learnt(w.id);
+    return true;
+  }).map(w=>{
+    const s=P.s[w.id]||{n:0,str:0}, d=learnt(w.id);
+    return `<button class="wlrow ${d?'done':''}" data-w="${esc(w.id)}">
+      <span class="box">${d?'✓':''}</span>
+      <span class="ww">${esc(w.id)}</span>
+      <span class="wm">${esc(gloss(w))}</span>
+      <span class="ws">${d?'learnt':s.n?s.str+'/5':'—'}</span></button>`;
+  }).join('');
+  $('app').innerHTML=`<h1>My progress</h1>${xpBar()}
+    <div class="filt" id="modebar">
+      <button data-m="list" class="${wlMode==='list'?'on':''}">all words</button>
+      <button data-m="collect" class="${wlMode==='collect'?'on':''}">word families</button>
+    </div>` + (wlMode==='collect'
+    ? `<p class="sub">Every small word you learn unlocks the longer ones built
+       from it. Tap any word to mark it learnt.</p>${drawCollections()}`
+    : `<p class="sub">Tap a word to mark it learnt, or to put it back in rotation.
+       Words marked learnt stop appearing in rounds.</p>
+      <div class="filt">${filters.map(([k,l])=>
+        `<button data-f="${k}" class="${wlFilter===k?'on':''}">${l}</button>`).join('')}</div>
+      <div class="wl">${rows||'<p class="sub">Nothing here yet.</p>'}</div>`);
+  $('modebar').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    wlMode=b.dataset.m; drawWords(); });
+  $('app').querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{
+    wlFilter=b.dataset.f; drawWords(); });
+  $('app').querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{
+    const s=st(b.dataset.w);
+    // Marking by hand asserts knowledge, so it must carry strength too;
+    // otherwise every word could read as learnt while mastery stayed at 0.
+    s.m=!s.m; s.str = s.m ? MAXSTR : Math.min(s.str,3);
+    save(); drawWords(); });
+  pill();
+}
+
+function syncLang(){ $('lang').innerHTML=FLAG[P.lang]; }
+
+$('stop').onclick=()=>{ if(view==='play') summary(); };
+$('words').onclick=drawWords;
+$('settings').onclick=drawSettings;
 $('back').onclick=drawMenu;
-$('lang').onclick=()=>{ P.lang=P.lang==='de'?'en':'de'; save();
-  $('lang').innerHTML='glosses <b>'+P.lang.toUpperCase()+'</b>';
-  if(view==='menu')drawMenu(); else if(view==='play')drawQ(); else summary(); };
-$('reset').onclick=()=>{ if(confirm('Erase all progress?')){ P={lang:P.lang,intro:P.intro,s:{}}; save(); drawMenu(); } };
-$('lang').innerHTML='glosses <b>'+P.lang.toUpperCase()+'</b>';
+$('lang').onclick=()=>{ P.lang=P.lang==='de'?'en':'de'; save(); syncLang();
+  if(view==='menu')drawMenu(); else if(view==='play')drawQ();
+  else if(view==='intro'){ $('app').innerHTML=introHTML();
+    $('gotit').onclick=()=>{ P.intro=true; save(); start(lane); }; }
+  else if(view==='words')drawWords(); else if(view==='settings')drawSettings();
+  else summary(); };
+syncLang();
 drawMenu();
 </script>
 </body>

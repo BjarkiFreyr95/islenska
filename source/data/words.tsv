@@ -1,75 +1,75 @@
-icelandic	pos	de	en	tags	note
-maður		der Mann|der Mensch	man|person	people,core	
-kona		die Frau	woman	people,core	
-barn		das Kind	child	people,core	
-vinur		der Freund	friend	people,core	
-móðir		die Mutter	mother	people,core	
-faðir		der Vater	father	people,core	
-systir		die Schwester	sister	people	
-bróðir		der Bruder	brother	people	
-hús		das Haus	house	place,core	
-land		das Land	country|land	place,core	
-borg		die Stadt	city	place,core	
-gata		die Straße	street	place	
-fjall		der Berg	mountain	nature	
-vatn		das Wasser	water	nature,core	
-veður		das Wetter	weather	nature	
-snjór		der Schnee	snow	nature	
-vindur		der Wind	wind	nature	
-matur		das Essen	food	food,core	
-brauð		das Brot	bread	food	
-mjólk		die Milch	milk	food	
-kaffi		der Kaffee	coffee	food	
-dagur		der Tag	day	time,core	
-nótt		die Nacht	night	time,core	
-ár		das Jahr	year	time,core	
-tími		die Zeit	time	time,core	
-morgunn		der Morgen	morning	time	
-kvöld		der Abend	evening	time	
-bók		das Buch	book	object,core	
-borð		der Tisch	table	object	
-stóll		der Stuhl	chair	object	
-gluggi		das Fenster	window	object	
-hurð		die Tür	door	object	
-mynd		das Bild	picture|image	object,core	
-bíll		das Auto	car	object,core	
-sími		das Telefon	telephone	object	
-lykill		der Schlüssel	key	object	
-peningur		das Geld	money	object,core	
-hundur		der Hund	dog	animal	
-köttur		die Katze	cat	animal	
-skóli		die Schule	school	place,core	
-vinna		die Arbeit	work	abstract,core	
-hugur		der Sinn|der Geist	mind	abstract	
-hönd		die Hand	hand	body	
-fótur		der Fuß|das Bein	foot|leg	body	
-auga		das Auge	eye	body	
-munnur		der Mund	mouth	body	
-hugmynd		die Idee	idea	abstract	
-flöskutappi		der Flaschenverschluss	bottle cap	object	
-bílrúða		die Autoscheibe	car window	object	
-eldhús		die Küche	kitchen	place	
-bókasafn		die Bibliothek	library	place	
-barnabók		das Kinderbuch	children's book	object	
-barnabarn		das Enkelkind	grandchild	people	
-morgunmatur		das Frühstück	breakfast	food	
-kaffihús		das Café	café	place	
-kaffibolli		die Kaffeetasse	coffee cup	object	
-sjúkrahús		das Krankenhaus	hospital	place	
-sundlaug		das Schwimmbad	swimming pool	place	
-handklæði		das Handtuch	towel	object	
-fótbolti		der Fußball	football|soccer	object	
-snjóbolti		der Schneeball	snowball	object	
-veitingastaður		das Restaurant	restaurant	place	
-vinnustaður		der Arbeitsplatz	workplace	place	
-ísskápur		der Kühlschrank	fridge	object	
-lögregla		die Polizei	police	place	
-háskóli		die Universität	university	place	há- is the adjective hár (high), unrelated to the noun hár (hair).
-sjónvarp		der Fernseher	television	object	
-tannbursti		die Zahnbürste	toothbrush	object	
-farsími		das Handy	mobile phone	object	far- here is the travel stem (för, fara), not far (a mark) — literally a journey-phone.
-lyklaborð		die Tastatur	keyboard	object	
-bílstjóri		der Fahrer	driver	people	
-dagblað		die Zeitung	newspaper	object	
-bókabúð		die Buchhandlung	bookshop	place	
-rauðrófa		die Rote Bete	beetroot	food	rauð- is the adjective rauður (red). rófa here is the root vegetable, NOT the homograph meaning tail.
+icelandic	pos	de	en	tags	note	split
+maður		der Mann|der Mensch	man|person	people,core		
+kona		die Frau	woman	people,core		
+barn		das Kind	child	people,core		
+vinur		der Freund	friend	people,core		
+móðir		die Mutter	mother	people,core		
+faðir		der Vater	father	people,core		
+systir		die Schwester	sister	people		
+bróðir		der Bruder	brother	people		
+hús		das Haus	house	place,core		
+land		das Land	country|land	place,core		
+borg		die Stadt	city	place,core		
+gata		die Straße	street	place		
+fjall		der Berg	mountain	nature		
+vatn		das Wasser	water	nature,core		
+veður		das Wetter	weather	nature		
+snjór		der Schnee	snow	nature		
+vindur		der Wind	wind	nature		
+matur		das Essen	food	food,core		
+brauð		das Brot	bread	food		
+mjólk		die Milch	milk	food		
+kaffi		der Kaffee	coffee	food		
+dagur		der Tag	day	time,core		
+nótt		die Nacht	night	time,core		
+ár		das Jahr	year	time,core		
+tími		die Zeit	time	time,core		
+morgunn		der Morgen	morning	time		
+kvöld		der Abend	evening	time		
+bók		das Buch	book	object,core		
+borð		der Tisch	table	object		
+stóll		der Stuhl	chair	object		
+gluggi		das Fenster	window	object		
+hurð		die Tür	door	object		
+mynd		das Bild	picture|image	object,core		
+bíll		das Auto	car	object,core		
+sími		das Telefon	telephone	object		
+lykill		der Schlüssel	key	object		
+peningur		das Geld	money	object,core		
+hundur		der Hund	dog	animal		
+köttur		die Katze	cat	animal		
+skóli		die Schule	school	place,core		
+vinna		die Arbeit	work	abstract,core		
+hugur		der Sinn|der Geist	mind	abstract		
+hönd		die Hand	hand	body		
+fótur		der Fuß|das Bein	foot|leg	body		
+auga		das Auge	eye	body		
+munnur		der Mund	mouth	body		
+hugmynd		die Idee	idea	abstract		
+flöskutappi		der Flaschenverschluss	bottle cap	object		
+bílrúða		die Autoscheibe	car window	object		
+eldhús		die Küche	kitchen	place		
+bókasafn		die Bibliothek	library	place		
+barnabók		das Kinderbuch	children's book	object		
+barnabarn		das Enkelkind	grandchild	people		
+morgunmatur		das Frühstück	breakfast	food		
+kaffihús		das Café	café	place		
+kaffibolli		die Kaffeetasse	coffee cup	object		
+sjúkrahús		das Krankenhaus	hospital	place		
+sundlaug		das Schwimmbad	swimming pool	place		
+handklæði		das Handtuch	towel	object		
+fótbolti		der Fußball	football|soccer	object		
+snjóbolti		der Schneeball	snowball	object		
+veitingastaður		das Restaurant	restaurant	place		
+vinnustaður		der Arbeitsplatz	workplace	place		
+ísskápur		der Kühlschrank	fridge	object		
+lögregla		die Polizei	police	people		
+háskóli		die Universität	university	place	há- is the adjective hár (high), unrelated to the noun hár (hair).	
+sjónvarp		der Fernseher	television	object		
+tannbursti		die Zahnbürste	toothbrush	object		
+farsími		das Handy	mobile phone	object	far- here is the travel stem (för, fara), not far (a mark) — literally a journey-phone.	far=för sími=sími
+lyklaborð		die Tastatur	keyboard	object		
+bílstjóri		der Fahrer	driver	people		
+dagblað		die Zeitung	newspaper	object		
+bókabúð		die Buchhandlung	bookshop	place		
+rauðrófa		die Rote Bete	beetroot	food	rauð- is the adjective rauður (red). rófa here is the root vegetable, NOT the homograph meaning tail.	

@@ -243,6 +243,28 @@ def derivation(word):
     return None
 
 
+def parse_split_override(spec):
+    """`split` column: empty = automatic, `none` = force simplex,
+    `hring=hringur laga=-` = these fragments, with an explicit lemma each
+    (`-` meaning deliberately unresolved)."""
+    spec = (spec or "").strip()
+    if not spec:
+        return None
+    if spec.lower() == "none":
+        return []
+    out = []
+    for tok in spec.split():
+        if "=" in tok:
+            frag, lemma = tok.split("=", 1)
+        else:
+            frag, lemma = tok, ""
+        # `-` means deliberately not a word: a derivational suffix such as
+        # -laga. It must not fall through to the resolver, which would happily
+        # match it against some unrelated lemma.
+        out.append((frag, lemma if lemma and lemma != "-" else None, True))
+    return out
+
+
 def split_compound(word):
     """BIN-backed segmentation. min_word is lowered from the library default
     of 8, a typographic guard that would skip short compounds like hugmynd."""
@@ -395,12 +417,39 @@ def main():
         pos = pos_of.get(word)
         is_adj = r.get("wc") == "adj"
         para = adj_paradigm(word) if is_adj else paradigm(word, pos)
-        parts_raw = split_compound(word) if r["role"] == "deck" else []
+        override = parse_split_override(r.get("split"))
+        if override is None:
+            parts_raw = [(f, None, False) for f in
+                         (split_compound(word) if r["role"] == "deck" else [])]
+        else:
+            joined = "".join(f for f, _, _ in override)
+            if joined != word:
+                sys.stderr.write("WARNING: split override for %s does not "
+                                 "reconstruct the word (%s)\n" % (word, joined))
+            parts_raw = override
 
         parts, off = [], 0
-        for frag in parts_raw:
+        for frag, forced, is_override in parts_raw:
+            if is_override and not forced:
+                cands = []          # explicit suffix, no lemma to find
+            elif forced:
+                # A curator-supplied lemma always wins over the resolver.
+                g = gloss.get(forced)
+                e = head_entry(forced, pinned.get(forced))
+                cands = [{
+                    "lemma": forced,
+                    "pos": POS_LABEL.get(e.ofl, "?") if e else "?",
+                    "gender": GENDER_SHORT.get(e.ofl) if e else None,
+                    "slot": "set by hand", "case_name": None, "via": "override",
+                    "gloss": ({"de": g["de"][0]["text"], "en": g["en"][0]["text"]}
+                              if g else None),
+                    "has_card": forced in gloss,
+                }]
+            else:
+                cands = resolve(frag)
             parts.append({"surface": frag, "span": [off, off + len(frag)],
-                          "candidates": resolve(frag)})
+                          "candidates": cands,
+                          "suffix": bool(is_override and not forced)})
             off += len(frag)
 
         de1 = gloss[word]["de"][0]["text"]
@@ -442,8 +491,12 @@ def main():
                     "gloss": top["gloss"] if top else None,
                     "has_card": top["has_card"] if top else False,
                     "alts": [c["lemma"] for c in p["candidates"][1:4]],
+                    "suffix": p.get("suffix", False),
                     "assert": ("%s- comes from %s" % (p["surface"], top["lemma"])
-                               if top else "%s- comes from an unknown lemma" % p["surface"]),
+                               if top else
+                               "-%s is a suffix, not a word" % p["surface"]
+                               if p.get("suffix") else
+                               "%s- comes from an unknown lemma" % p["surface"]),
                 })
 
         # Corpus signals. icegrams counts SURFACE FORMS, so a count is an
@@ -490,7 +543,8 @@ def main():
             "outranked": weak,
         }
 
-        unresolved = sum(1 for p in parts if not p["candidates"])
+        unresolved = sum(1 for p in parts
+                         if not p["candidates"] and not p.get("suffix"))
         guessed = sum(1 for p in parts if p["candidates"]
                       and p["candidates"][0]["via"] == "umlaut")
         if is_adj:
@@ -525,11 +579,13 @@ def main():
         })
 
     # ---- productivity: how many deck compounds each lemma helps build ----
-    builds = defaultdict(list)
+    builds = defaultdict(set)
     for c in cards:
+        # A stem appearing twice in one word (barn in barnabarn) is still one
+        # word built, so collect distinct compounds rather than occurrences.
         for p in c["compound"]["parts"]:
             if p["candidates"]:
-                builds[p["candidates"][0]["lemma"]].append(c["id"])
+                builds[p["candidates"][0]["lemma"]].add(c["id"])
     for c in cards:
         c["builds"] = sorted(builds.get(c["id"], []))
         c["productivity"] = len(c["builds"])

@@ -1405,8 +1405,10 @@
         }
       ],
       "confidence": "medium",
-      "builds": [],
-      "productivity": 0
+      "builds": [
+        "hringlaga"
+      ],
+      "productivity": 1
     },
     {
       "id": "hurð",
@@ -3310,10 +3312,9 @@
       "confidence": "high",
       "builds": [
         "barnabarn",
-        "barnabarn",
         "barnabók"
       ],
-      "productivity": 3,
+      "productivity": 2,
       "distractors": [
         "vatn",
         "barnabarn",
@@ -5626,7 +5627,6 @@
       "productivity": 0,
       "distractors": [
         "barn",
-        "lögregla",
         "kona",
         "bók",
         "bókabúð",
@@ -5634,7 +5634,8 @@
         "sundlaug",
         "bíll",
         "vinna",
-        "peningur"
+        "peningur",
+        "nótt"
       ]
     },
     {
@@ -6997,8 +6998,8 @@
         "barnabarn",
         "vinur",
         "barn",
-        "kona",
-        "skóli"
+        "lögregla",
+        "kona"
       ]
     },
     {
@@ -12131,10 +12132,8 @@
         }
       ],
       "confidence": "high",
-      "builds": [
-        "farsími"
-      ],
-      "productivity": 1
+      "builds": [],
+      "productivity": 0
     },
     {
       "id": "faðir",
@@ -14671,8 +14670,10 @@
         }
       ],
       "confidence": "high",
-      "builds": [],
-      "productivity": 0
+      "builds": [
+        "farsími"
+      ],
+      "productivity": 1
     },
     {
       "id": "gamall",
@@ -15699,7 +15700,6 @@
       "builds": [],
       "productivity": 0,
       "distractors": [
-        "lögregla",
         "veitingastaður",
         "bókabúð",
         "sundlaug",
@@ -15708,7 +15708,8 @@
         "vinnustaður",
         "kaffihús",
         "borg",
-        "sjúkrahús"
+        "sjúkrahús",
+        "skóli"
       ]
     },
     {
@@ -27982,13 +27983,13 @@
         "vinna",
         "mynd",
         "borg",
+        "lögregla",
         "land",
         "barnabarn",
         "vinur",
         "skóli",
         "systir",
-        "peningur",
-        "nótt"
+        "peningur"
       ]
     },
     {
@@ -50536,10 +50537,10 @@
         "bróðir",
         "vinur",
         "maður",
+        "lögregla",
         "kona",
         "barnabarn",
-        "barn",
-        "sími"
+        "barn"
       ]
     },
     {
@@ -59177,7 +59178,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "rúða",
@@ -59199,7 +59201,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -59353,6 +59356,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "bíl- comes from bíll"
         },
         {
@@ -59373,6 +59377,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "rúða- comes from rúða"
         }
       ],
@@ -59455,7 +59460,8 @@
                 "gloss": null,
                 "has_card": false
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "klæði",
@@ -59477,7 +59483,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -59619,6 +59626,7 @@
           "alts": [
             "hendi"
           ],
+          "suffix": false,
           "assert": "hand- comes from hönd"
         },
         {
@@ -59639,6 +59647,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "klæði- comes from klæði"
         }
       ],
@@ -59656,630 +59665,6 @@
         "kaffibolli",
         "flöskutappi",
         "sjónvarp"
-      ]
-    },
-    {
-      "id": "hringlaga",
-      "lemma": "hringlaga",
-      "role": "deck",
-      "wordclass": "adj",
-      "coverage": 48,
-      "pos": "adj",
-      "gender": null,
-      "gender_short": null,
-      "glosses": {
-        "de": [
-          {
-            "text": "rund",
-            "weight": 1.0
-          }
-        ],
-        "en": [
-          {
-            "text": "round",
-            "weight": 1.0
-          }
-        ]
-      },
-      "tags": [
-        "object"
-      ],
-      "note": "hringur (circle) + -laga (shaped). The ending -laga means shaped like; compare kringlóttur.",
-      "family": [
-        {
-          "word": "hringur",
-          "pos": "noun",
-          "gender": "m",
-          "de": "der Kreis",
-          "en": "circle",
-          "rel": "stem",
-          "in_bin": true,
-          "base": null,
-          "middle_voice": false,
-          "freq": 1010
-        }
-      ],
-      "derivation": null,
-      "is_noun": false,
-      "compound": {
-        "is_compound": true,
-        "parts": [
-          {
-            "surface": "hringl",
-            "span": [
-              0,
-              6
-            ],
-            "candidates": []
-          },
-          {
-            "surface": "aga",
-            "span": [
-              6,
-              9
-            ],
-            "candidates": []
-          }
-        ]
-      },
-      "paradigm": {
-        "strong": {
-          "kk": {
-            "nf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "þf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "þgf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "ef": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            }
-          },
-          "kvk": {
-            "nf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "þf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "þgf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "ef": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            }
-          },
-          "hk": {
-            "nf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "þf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "þgf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "ef": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            }
-          }
-        },
-        "weak": {
-          "kk": {
-            "nf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "þf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "þgf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "ef": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            }
-          },
-          "kvk": {
-            "nf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "þf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "þgf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "ef": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            }
-          },
-          "hk": {
-            "nf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "þf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "þgf": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            },
-            "ef": {
-              "sg": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              },
-              "pl": {
-                "form": "hringlaga",
-                "freq": 157,
-                "variants": []
-              }
-            }
-          }
-        },
-        "comparative": {
-          "kk": {
-            "nf": {
-              "sg": null,
-              "pl": null
-            },
-            "þf": {
-              "sg": null,
-              "pl": null
-            },
-            "þgf": {
-              "sg": null,
-              "pl": null
-            },
-            "ef": {
-              "sg": null,
-              "pl": null
-            }
-          },
-          "kvk": {
-            "nf": {
-              "sg": null,
-              "pl": null
-            },
-            "þf": {
-              "sg": null,
-              "pl": null
-            },
-            "þgf": {
-              "sg": null,
-              "pl": null
-            },
-            "ef": {
-              "sg": null,
-              "pl": null
-            }
-          },
-          "hk": {
-            "nf": {
-              "sg": null,
-              "pl": null
-            },
-            "þf": {
-              "sg": null,
-              "pl": null
-            },
-            "þgf": {
-              "sg": null,
-              "pl": null
-            },
-            "ef": {
-              "sg": null,
-              "pl": null
-            }
-          }
-        },
-        "super_strong": {
-          "kk": {
-            "nf": {
-              "sg": null,
-              "pl": null
-            },
-            "þf": {
-              "sg": null,
-              "pl": null
-            },
-            "þgf": {
-              "sg": null,
-              "pl": null
-            },
-            "ef": {
-              "sg": null,
-              "pl": null
-            }
-          },
-          "kvk": {
-            "nf": {
-              "sg": null,
-              "pl": null
-            },
-            "þf": {
-              "sg": null,
-              "pl": null
-            },
-            "þgf": {
-              "sg": null,
-              "pl": null
-            },
-            "ef": {
-              "sg": null,
-              "pl": null
-            }
-          },
-          "hk": {
-            "nf": {
-              "sg": null,
-              "pl": null
-            },
-            "þf": {
-              "sg": null,
-              "pl": null
-            },
-            "þgf": {
-              "sg": null,
-              "pl": null
-            },
-            "ef": {
-              "sg": null,
-              "pl": null
-            }
-          }
-        },
-        "super_weak": {
-          "kk": {
-            "nf": {
-              "sg": null,
-              "pl": null
-            },
-            "þf": {
-              "sg": null,
-              "pl": null
-            },
-            "þgf": {
-              "sg": null,
-              "pl": null
-            },
-            "ef": {
-              "sg": null,
-              "pl": null
-            }
-          },
-          "kvk": {
-            "nf": {
-              "sg": null,
-              "pl": null
-            },
-            "þf": {
-              "sg": null,
-              "pl": null
-            },
-            "þgf": {
-              "sg": null,
-              "pl": null
-            },
-            "ef": {
-              "sg": null,
-              "pl": null
-            }
-          },
-          "hk": {
-            "nf": {
-              "sg": null,
-              "pl": null
-            },
-            "þf": {
-              "sg": null,
-              "pl": null
-            },
-            "þgf": {
-              "sg": null,
-              "pl": null
-            },
-            "ef": {
-              "sg": null,
-              "pl": null
-            }
-          }
-        },
-        "_filled": 48
-      },
-      "corpus": {
-        "sg_total": 3768,
-        "pl_total": 3768,
-        "total": 7536,
-        "plural_attested": true,
-        "floor_note": true,
-        "plural_rare": false,
-        "outranked": []
-      },
-      "claims": [
-        {
-          "id": "gloss",
-          "kind": "gloss",
-          "key": "gloss:hringlaga",
-          "assert": "hringlaga means “rund” / “round”"
-        },
-        {
-          "id": "paradigm",
-          "kind": "adjparadigm",
-          "key": "paradigm:hringlaga",
-          "assert": "declension of hringlaga is correct"
-        },
-        {
-          "id": "family",
-          "kind": "family",
-          "key": "family:hringlaga",
-          "assert": "hringlaga is related to hringur"
-        },
-        {
-          "id": "split",
-          "kind": "split",
-          "key": "split:hringlaga",
-          "assert": "hringlaga = hringl + aga"
-        },
-        {
-          "id": "part0",
-          "kind": "part",
-          "index": 0,
-          "key": "part:hringl->?",
-          "surface": "hringl",
-          "resolved": false,
-          "lemma": null,
-          "slot": null,
-          "case_name": null,
-          "gender": null,
-          "via": null,
-          "gloss": null,
-          "has_card": false,
-          "alts": [],
-          "assert": "hringl- comes from an unknown lemma"
-        },
-        {
-          "id": "part1",
-          "kind": "part",
-          "index": 1,
-          "key": "part:aga->?",
-          "surface": "aga",
-          "resolved": false,
-          "lemma": null,
-          "slot": null,
-          "case_name": null,
-          "gender": null,
-          "via": null,
-          "gloss": null,
-          "has_card": false,
-          "alts": [],
-          "assert": "aga- comes from an unknown lemma"
-        }
-      ],
-      "confidence": "low",
-      "builds": [],
-      "productivity": 0,
-      "distractors": [
-        "hreinn",
-        "þungur",
-        "langur",
-        "heitur",
-        "vondur",
-        "nýr",
-        "lítill",
-        "kaldur",
-        "harður",
-        "góður"
       ]
     },
     {
@@ -60306,7 +59691,7 @@
         ]
       },
       "tags": [
-        "place"
+        "people"
       ],
       "note": null,
       "family": [],
@@ -60348,7 +59733,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "regla",
@@ -60370,7 +59756,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -60526,6 +59913,7 @@
           "alts": [
             "lag"
           ],
+          "suffix": false,
           "assert": "lög- comes from lög"
         },
         {
@@ -60546,6 +59934,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "regla- comes from regla"
         }
       ],
@@ -60553,16 +59942,16 @@
       "builds": [],
       "productivity": 0,
       "distractors": [
-        "gata",
-        "borg",
-        "veitingastaður",
-        "sundlaug",
-        "skóli",
-        "land",
-        "háskóli",
-        "bókabúð",
-        "sjúkrahús",
-        "vinnustaður"
+        "kona",
+        "systir",
+        "móðir",
+        "bróðir",
+        "barn",
+        "barnabarn",
+        "vinur",
+        "maður",
+        "faðir",
+        "bílstjóri"
       ]
     },
     {
@@ -60618,7 +60007,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "rófa",
@@ -60640,7 +60030,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -60794,6 +60185,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "rauð- comes from rauður"
         },
         {
@@ -60814,6 +60206,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "rófa- comes from rófa"
         }
       ],
@@ -60896,7 +60289,8 @@
                 "gloss": null,
                 "has_card": false
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "bursti",
@@ -60918,7 +60312,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -61060,6 +60455,7 @@
           "alts": [
             "tönnl"
           ],
+          "suffix": false,
           "assert": "tann- comes from tönn"
         },
         {
@@ -61080,6 +60476,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "bursti- comes from bursti"
         }
       ],
@@ -61152,7 +60549,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "matur",
@@ -61174,7 +60572,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -61282,6 +60681,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "morgun- comes from morgunn"
         },
         {
@@ -61302,6 +60702,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "matur- comes from matur"
         }
       ],
@@ -61374,7 +60775,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "barn",
@@ -61396,7 +60798,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -61536,6 +60939,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "barna- comes from barn"
         },
         {
@@ -61556,6 +60960,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "barn- comes from barn"
         }
       ],
@@ -61628,7 +61033,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "bók",
@@ -61650,7 +61056,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -61790,6 +61197,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "barna- comes from barn"
         },
         {
@@ -61810,6 +61218,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "bók- comes from bók"
         }
       ],
@@ -61882,7 +61291,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "stjóri",
@@ -61904,7 +61314,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -62044,6 +61455,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "bíl- comes from bíll"
         },
         {
@@ -62064,6 +61476,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "stjóri- comes from stjóri"
         }
       ],
@@ -62080,7 +61493,7 @@
         "barnabarn",
         "barn",
         "móðir",
-        "kona"
+        "lögregla"
       ]
     },
     {
@@ -62136,7 +61549,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "búð",
@@ -62158,7 +61572,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -62298,6 +61713,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "bóka- comes from bók"
         },
         {
@@ -62318,6 +61734,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "búð- comes from búð"
         }
       ],
@@ -62390,7 +61807,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "safn",
@@ -62412,7 +61830,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -62552,6 +61971,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "bóka- comes from bók"
         },
         {
@@ -62572,6 +61992,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "safn- comes from safn"
         }
       ],
@@ -62644,7 +62065,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "blað",
@@ -62666,7 +62088,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -62806,6 +62229,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "dag- comes from dagur"
         },
         {
@@ -62826,6 +62250,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "blað- comes from blað"
         }
       ],
@@ -62898,7 +62323,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "blár",
@@ -62920,7 +62346,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -63739,6 +63166,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "dökk- comes from dökkur"
         },
         {
@@ -63759,6 +63187,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "blár- comes from blár"
         }
       ],
@@ -63831,7 +63260,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "grár",
@@ -63853,7 +63283,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -64672,6 +64103,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "dökk- comes from dökkur"
         },
         {
@@ -64692,6 +64124,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "grár- comes from grár"
         }
       ],
@@ -64764,7 +64197,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "grænn",
@@ -64786,7 +64220,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -65605,6 +65040,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "dökk- comes from dökkur"
         },
         {
@@ -65625,6 +65061,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "grænn- comes from grænn"
         }
       ],
@@ -65697,7 +65134,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "rauður",
@@ -65719,7 +65157,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -66538,6 +65977,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "dökk- comes from dökkur"
         },
         {
@@ -66558,6 +65998,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "rauður- comes from rauður"
         }
       ],
@@ -66630,7 +66071,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "hús",
@@ -66652,7 +66094,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -66792,6 +66235,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "eld- comes from eldur"
         },
         {
@@ -66812,6 +66256,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "hús- comes from hús"
         }
       ],
@@ -66872,19 +66317,20 @@
             ],
             "candidates": [
               {
-                "lemma": "far",
+                "lemma": "för",
                 "pos": "noun",
-                "gender": "n",
-                "slot": "þf.et",
-                "case_name": "þolfall",
-                "via": "form-index",
+                "gender": "f",
+                "slot": "set by hand",
+                "case_name": null,
+                "via": "override",
                 "gloss": {
-                  "de": "die Spur",
-                  "en": "mark"
+                  "de": "die Fahrt",
+                  "en": "journey"
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "sími",
@@ -66897,16 +66343,17 @@
                 "lemma": "sími",
                 "pos": "noun",
                 "gender": "m",
-                "slot": "nf.et",
-                "case_name": "nefnifall",
-                "via": "form-index",
+                "slot": "set by hand",
+                "case_name": null,
+                "via": "override",
                 "gloss": {
                   "de": "das Telefon",
                   "en": "telephone"
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -67032,21 +66479,22 @@
           "id": "part0",
           "kind": "part",
           "index": 0,
-          "key": "part:far->far",
+          "key": "part:far->för",
           "surface": "far",
           "resolved": true,
-          "lemma": "far",
-          "slot": "þf.et",
-          "case_name": "þolfall",
-          "gender": "n",
-          "via": "form-index",
+          "lemma": "för",
+          "slot": "set by hand",
+          "case_name": null,
+          "gender": "f",
+          "via": "override",
           "gloss": {
-            "de": "die Spur",
-            "en": "mark"
+            "de": "die Fahrt",
+            "en": "journey"
           },
           "has_card": true,
           "alts": [],
-          "assert": "far- comes from far"
+          "suffix": false,
+          "assert": "far- comes from för"
         },
         {
           "id": "part1",
@@ -67056,16 +66504,17 @@
           "surface": "sími",
           "resolved": true,
           "lemma": "sími",
-          "slot": "nf.et",
-          "case_name": "nefnifall",
+          "slot": "set by hand",
+          "case_name": null,
           "gender": "m",
-          "via": "form-index",
+          "via": "override",
           "gloss": {
             "de": "das Telefon",
             "en": "telephone"
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "sími- comes from sími"
         }
       ],
@@ -67138,7 +66587,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "blár",
@@ -67160,7 +66610,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -67979,6 +67430,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "fjólu- comes from fjóla"
         },
         {
@@ -67999,6 +67451,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "blár- comes from blár"
         }
       ],
@@ -68071,7 +67524,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "tappi",
@@ -68093,7 +67547,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -68233,6 +67688,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "flösku- comes from flaska"
         },
         {
@@ -68253,6 +67709,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "tappi- comes from tappi"
         }
       ],
@@ -68329,7 +67786,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "bolti",
@@ -68351,7 +67809,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -68491,6 +67950,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "fót- comes from fótur"
         },
         {
@@ -68511,6 +67971,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "bolti- comes from bolti"
         }
       ],
@@ -68528,6 +67989,651 @@
         "sími",
         "lykill",
         "gluggi"
+      ]
+    },
+    {
+      "id": "hringlaga",
+      "lemma": "hringlaga",
+      "role": "deck",
+      "wordclass": "adj",
+      "coverage": 48,
+      "pos": "adj",
+      "gender": null,
+      "gender_short": null,
+      "glosses": {
+        "de": [
+          {
+            "text": "rund",
+            "weight": 1.0
+          }
+        ],
+        "en": [
+          {
+            "text": "round",
+            "weight": 1.0
+          }
+        ]
+      },
+      "tags": [
+        "object"
+      ],
+      "note": "hringur (circle) + -laga (shaped). The ending -laga means shaped like; compare kringlóttur.",
+      "family": [
+        {
+          "word": "hringur",
+          "pos": "noun",
+          "gender": "m",
+          "de": "der Kreis",
+          "en": "circle",
+          "rel": "stem",
+          "in_bin": true,
+          "base": null,
+          "middle_voice": false,
+          "freq": 1010
+        }
+      ],
+      "derivation": null,
+      "is_noun": false,
+      "compound": {
+        "is_compound": true,
+        "parts": [
+          {
+            "surface": "hring",
+            "span": [
+              0,
+              5
+            ],
+            "candidates": [
+              {
+                "lemma": "hringur",
+                "pos": "noun",
+                "gender": "m",
+                "slot": "set by hand",
+                "case_name": null,
+                "via": "override",
+                "gloss": {
+                  "de": "der Kreis",
+                  "en": "circle"
+                },
+                "has_card": true
+              }
+            ],
+            "suffix": false
+          },
+          {
+            "surface": "laga",
+            "span": [
+              5,
+              9
+            ],
+            "candidates": [],
+            "suffix": true
+          }
+        ]
+      },
+      "paradigm": {
+        "strong": {
+          "kk": {
+            "nf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "þf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "þgf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "ef": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            }
+          },
+          "kvk": {
+            "nf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "þf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "þgf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "ef": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            }
+          },
+          "hk": {
+            "nf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "þf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "þgf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "ef": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            }
+          }
+        },
+        "weak": {
+          "kk": {
+            "nf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "þf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "þgf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "ef": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            }
+          },
+          "kvk": {
+            "nf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "þf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "þgf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "ef": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            }
+          },
+          "hk": {
+            "nf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "þf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "þgf": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            },
+            "ef": {
+              "sg": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              },
+              "pl": {
+                "form": "hringlaga",
+                "freq": 157,
+                "variants": []
+              }
+            }
+          }
+        },
+        "comparative": {
+          "kk": {
+            "nf": {
+              "sg": null,
+              "pl": null
+            },
+            "þf": {
+              "sg": null,
+              "pl": null
+            },
+            "þgf": {
+              "sg": null,
+              "pl": null
+            },
+            "ef": {
+              "sg": null,
+              "pl": null
+            }
+          },
+          "kvk": {
+            "nf": {
+              "sg": null,
+              "pl": null
+            },
+            "þf": {
+              "sg": null,
+              "pl": null
+            },
+            "þgf": {
+              "sg": null,
+              "pl": null
+            },
+            "ef": {
+              "sg": null,
+              "pl": null
+            }
+          },
+          "hk": {
+            "nf": {
+              "sg": null,
+              "pl": null
+            },
+            "þf": {
+              "sg": null,
+              "pl": null
+            },
+            "þgf": {
+              "sg": null,
+              "pl": null
+            },
+            "ef": {
+              "sg": null,
+              "pl": null
+            }
+          }
+        },
+        "super_strong": {
+          "kk": {
+            "nf": {
+              "sg": null,
+              "pl": null
+            },
+            "þf": {
+              "sg": null,
+              "pl": null
+            },
+            "þgf": {
+              "sg": null,
+              "pl": null
+            },
+            "ef": {
+              "sg": null,
+              "pl": null
+            }
+          },
+          "kvk": {
+            "nf": {
+              "sg": null,
+              "pl": null
+            },
+            "þf": {
+              "sg": null,
+              "pl": null
+            },
+            "þgf": {
+              "sg": null,
+              "pl": null
+            },
+            "ef": {
+              "sg": null,
+              "pl": null
+            }
+          },
+          "hk": {
+            "nf": {
+              "sg": null,
+              "pl": null
+            },
+            "þf": {
+              "sg": null,
+              "pl": null
+            },
+            "þgf": {
+              "sg": null,
+              "pl": null
+            },
+            "ef": {
+              "sg": null,
+              "pl": null
+            }
+          }
+        },
+        "super_weak": {
+          "kk": {
+            "nf": {
+              "sg": null,
+              "pl": null
+            },
+            "þf": {
+              "sg": null,
+              "pl": null
+            },
+            "þgf": {
+              "sg": null,
+              "pl": null
+            },
+            "ef": {
+              "sg": null,
+              "pl": null
+            }
+          },
+          "kvk": {
+            "nf": {
+              "sg": null,
+              "pl": null
+            },
+            "þf": {
+              "sg": null,
+              "pl": null
+            },
+            "þgf": {
+              "sg": null,
+              "pl": null
+            },
+            "ef": {
+              "sg": null,
+              "pl": null
+            }
+          },
+          "hk": {
+            "nf": {
+              "sg": null,
+              "pl": null
+            },
+            "þf": {
+              "sg": null,
+              "pl": null
+            },
+            "þgf": {
+              "sg": null,
+              "pl": null
+            },
+            "ef": {
+              "sg": null,
+              "pl": null
+            }
+          }
+        },
+        "_filled": 48
+      },
+      "corpus": {
+        "sg_total": 3768,
+        "pl_total": 3768,
+        "total": 7536,
+        "plural_attested": true,
+        "floor_note": true,
+        "plural_rare": false,
+        "outranked": []
+      },
+      "claims": [
+        {
+          "id": "gloss",
+          "kind": "gloss",
+          "key": "gloss:hringlaga",
+          "assert": "hringlaga means “rund” / “round”"
+        },
+        {
+          "id": "paradigm",
+          "kind": "adjparadigm",
+          "key": "paradigm:hringlaga",
+          "assert": "declension of hringlaga is correct"
+        },
+        {
+          "id": "family",
+          "kind": "family",
+          "key": "family:hringlaga",
+          "assert": "hringlaga is related to hringur"
+        },
+        {
+          "id": "split",
+          "kind": "split",
+          "key": "split:hringlaga",
+          "assert": "hringlaga = hring + laga"
+        },
+        {
+          "id": "part0",
+          "kind": "part",
+          "index": 0,
+          "key": "part:hring->hringur",
+          "surface": "hring",
+          "resolved": true,
+          "lemma": "hringur",
+          "slot": "set by hand",
+          "case_name": null,
+          "gender": "m",
+          "via": "override",
+          "gloss": {
+            "de": "der Kreis",
+            "en": "circle"
+          },
+          "has_card": true,
+          "alts": [],
+          "suffix": false,
+          "assert": "hring- comes from hringur"
+        },
+        {
+          "id": "part1",
+          "kind": "part",
+          "index": 1,
+          "key": "part:laga->?",
+          "surface": "laga",
+          "resolved": false,
+          "lemma": null,
+          "slot": null,
+          "case_name": null,
+          "gender": null,
+          "via": null,
+          "gloss": null,
+          "has_card": false,
+          "alts": [],
+          "suffix": true,
+          "assert": "-laga is a suffix, not a word"
+        }
+      ],
+      "confidence": "high",
+      "builds": [],
+      "productivity": 0,
+      "distractors": [
+        "hreinn",
+        "þungur",
+        "langur",
+        "heitur",
+        "vondur",
+        "nýr",
+        "lítill",
+        "kaldur",
+        "harður",
+        "góður"
       ]
     },
     {
@@ -68583,7 +68689,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "mynd",
@@ -68605,7 +68712,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -68745,6 +68853,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "hug- comes from hugur"
         },
         {
@@ -68765,6 +68874,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "mynd- comes from mynd"
         }
       ],
@@ -68837,7 +68947,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "skóli",
@@ -68859,7 +68970,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -68999,6 +69111,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "há- comes from hár"
         },
         {
@@ -69019,6 +69132,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "skóli- comes from skóli"
         }
       ],
@@ -69030,12 +69144,12 @@
         "hús",
         "vinnustaður",
         "veitingastaður",
-        "lögregla",
         "sjúkrahús",
         "sundlaug",
         "land",
         "kaffihús",
-        "gata"
+        "gata",
+        "eldhús"
       ]
     },
     {
@@ -69091,7 +69205,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "vaxinn",
@@ -69113,7 +69228,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -69932,6 +70048,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "há- comes from hár"
         },
         {
@@ -69952,6 +70069,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "vaxinn- comes from vaxinn"
         }
       ],
@@ -70024,7 +70142,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "bolli",
@@ -70046,7 +70165,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -70186,6 +70306,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "kaffi- comes from kaffi"
         },
         {
@@ -70206,6 +70327,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "bolli- comes from bolli"
         }
       ],
@@ -70278,7 +70400,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "hús",
@@ -70300,7 +70423,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -70440,6 +70564,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "kaffi- comes from kaffi"
         },
         {
@@ -70460,6 +70585,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "hús- comes from hús"
         }
       ],
@@ -70532,7 +70658,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "blár",
@@ -70554,7 +70681,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -71373,6 +71501,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "ljós- comes from ljós"
         },
         {
@@ -71393,6 +71522,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "blár- comes from blár"
         }
       ],
@@ -71465,7 +71595,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "grár",
@@ -71487,7 +71618,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -72306,6 +72438,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "ljós- comes from ljós"
         },
         {
@@ -72326,6 +72459,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "grár- comes from grár"
         }
       ],
@@ -72398,7 +72532,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "grænn",
@@ -72420,7 +72555,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -73239,6 +73375,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "ljós- comes from ljós"
         },
         {
@@ -73259,6 +73396,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "grænn- comes from grænn"
         }
       ],
@@ -73331,7 +73469,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "borð",
@@ -73353,7 +73492,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -73493,6 +73633,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "lykla- comes from lykill"
         },
         {
@@ -73513,6 +73654,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "borð- comes from borð"
         }
       ],
@@ -73585,7 +73727,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "vaxinn",
@@ -73607,7 +73750,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -74426,6 +74570,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "lág- comes from lágur"
         },
         {
@@ -74446,6 +74591,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "vaxinn- comes from vaxinn"
         }
       ],
@@ -74518,7 +74664,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "varp",
@@ -74540,7 +74687,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -74680,6 +74828,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "sjón- comes from sjón"
         },
         {
@@ -74700,6 +74849,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "varp- comes from varp"
         }
       ],
@@ -74772,7 +74922,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "hús",
@@ -74794,7 +74945,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -74934,6 +75086,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "sjúkra- comes from sjúkur"
         },
         {
@@ -74954,6 +75107,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "hús- comes from hús"
         }
       ],
@@ -74969,8 +75123,8 @@
         "bókasafn",
         "sundlaug",
         "skóli",
-        "lögregla",
-        "háskóli"
+        "háskóli",
+        "gata"
       ]
     },
     {
@@ -75026,7 +75180,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "bolti",
@@ -75048,7 +75203,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -75188,6 +75344,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "snjó- comes from snjór"
         },
         {
@@ -75208,6 +75365,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "bolti- comes from bolti"
         }
       ],
@@ -75280,7 +75438,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "laug",
@@ -75302,7 +75461,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -75442,6 +75602,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "sund- comes from sund"
         },
         {
@@ -75462,6 +75623,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "laug- comes from laug"
         }
       ],
@@ -75476,9 +75638,9 @@
         "borg",
         "sjúkrahús",
         "veitingastaður",
-        "lögregla",
         "eldhús",
-        "bókasafn"
+        "bókasafn",
+        "bókabúð"
       ]
     },
     {
@@ -75534,7 +75696,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "staður",
@@ -75556,7 +75719,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -75696,6 +75860,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "veitinga- comes from veiting"
         },
         {
@@ -75716,6 +75881,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "staður- comes from staður"
         }
       ],
@@ -75729,10 +75895,10 @@
         "bókasafn",
         "skóli",
         "háskóli",
-        "lögregla",
         "kaffihús",
         "eldhús",
-        "bókabúð"
+        "bókabúð",
+        "sjúkrahús"
       ]
     },
     {
@@ -75788,7 +75954,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "staður",
@@ -75810,7 +75977,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -75950,6 +76118,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "vinnu- comes from vinna"
         },
         {
@@ -75970,6 +76139,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "staður- comes from staður"
         }
       ],
@@ -75984,9 +76154,9 @@
         "gata",
         "bókasafn",
         "sjúkrahús",
-        "lögregla",
         "land",
-        "hús"
+        "hús",
+        "eldhús"
       ]
     },
     {
@@ -76042,7 +76212,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           },
           {
             "surface": "skápur",
@@ -76064,7 +76235,8 @@
                 },
                 "has_card": true
               }
-            ]
+            ],
+            "suffix": false
           }
         ]
       },
@@ -76204,6 +76376,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "ís- comes from ís"
         },
         {
@@ -76224,6 +76397,7 @@
           },
           "has_card": true,
           "alts": [],
+          "suffix": false,
           "assert": "skápur- comes from skápur"
         }
       ],
@@ -77074,12 +77248,6 @@
         "gloss": "towel",
         "freq": 2720
       },
-      "hringlaga": {
-        "pos": "adj",
-        "gender": null,
-        "gloss": "round",
-        "freq": 7536
-      },
       "lögregla": {
         "pos": "noun",
         "gender": "f",
@@ -77193,6 +77361,12 @@
         "gender": "m",
         "gloss": "football",
         "freq": 131200
+      },
+      "hringlaga": {
+        "pos": "adj",
+        "gender": null,
+        "gloss": "round",
+        "freq": 7536
       },
       "hugmynd": {
         "pos": "noun",

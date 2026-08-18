@@ -4,18 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Deck review</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --ground:#0f151b; --panel:#17202a; --panel-2:#1d2833; --line:#26323e;
   --ink:#e6eef4; --muted:#8095a4; --dim:#5b6c7a;
   --part-a:#74b9d8; --part-b:#e0a860; --part-c:#b491d6;
   --ok:#57bf92; --no:#e2685f; --warn:#d9b45c;
-  --ui:"Space Grotesk",system-ui,-apple-system,sans-serif;
-  --serif:"Newsreader",Georgia,serif;
-  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --ui:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
@@ -218,12 +215,14 @@ function claimBody(c,w){
   if(c.kind==='adjparadigm'){
     const p=w.paradigm;
     return `<div class="txt">declension of <span class="lem">${esc(w.lemma)}</span>
-        <span class="sub" style="display:inline">adjective · ${p._filled} of 240 slots filled</span></div>
+        <span class="sub" style="display:inline">adjective · ${p._filled} of 120 slots filled</span></div>
       ${adjTable(p.strong,'sterk')}
       <details class="more" data-stop="1"><summary>veik beyging (weak — after the definite article)</summary>
         ${adjTable(p.weak,'veik')}</details>
       <details class="more" data-stop="1"><summary>miðstig and efsta stig (comparative and superlative)</summary>
-        ${adjTable(p.comparative,'miðstig')}${adjTable(p.super_strong,'efsta st.')}</details>`;
+        ${adjTable(p.comparative,'miðstig')}
+        ${adjTable(p.super_strong,'efsta sterk')}
+        ${adjTable(p.super_weak,'efsta veik')}</details>`;
   }
   if(c.kind==='degrees'){
     const d=c.assert.split(', ');
@@ -245,8 +244,11 @@ function claimBody(c,w){
   if(c.kind==='split')
     return `<div class="txt">splits as ${esc(c.assert.split('= ')[1])}</div>`;
   if(!c.resolved)
-    return `<div class="txt"><span class="frag">${esc(c.surface)}-</span> — no lemma found</div>
-      <div class="sub warn">needs a manual answer</div>`;
+    return c.suffix
+      ? `<div class="txt"><span class="frag">-${esc(c.surface)}</span> is a suffix, not a word</div>
+         <div class="sub">set by hand in the split column</div>`
+      : `<div class="txt"><span class="frag">${esc(c.surface)}-</span> — no lemma found</div>
+         <div class="sub warn">needs a manual answer</div>`;
   return `<div class="txt"><span class="frag">${esc(c.surface)}-</span> comes from
       <span class="lem">${esc(c.lemma)}</span>${c.gloss?` — <span class="de">${esc(c.gloss.de)}</span> / ${esc(c.gloss.en)}`:''}</div>
     <div class="sub">${esc(c.slot||'')}${c.case_name?' · '+esc(c.case_name):''}${c.gender?' · '+esc(c.gender):''}
@@ -255,7 +257,10 @@ function claimBody(c,w){
       ${c.alts.length?`<span class="alt">· or ${esc(c.alts.join(', '))}</span>`:''}</div>`;
 }
 
-function needsInput(c){return state[c.id]==='reject'||(c.kind==='part'&&!c.resolved);}
+function needsInput(c){
+  // A declared suffix is not a missing lemma, so do not ask for one.
+  return state[c.id]==='reject'||(c.kind==='part'&&!c.resolved&&!c.suffix);
+}
 
 function draw(){
   if(i>=words.length) return drawDone();

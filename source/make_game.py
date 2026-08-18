@@ -21,6 +21,7 @@ for c in deck["words"]:
         top = p["candidates"][0] if p["candidates"] else None
         parts.append({
             "surface": p["surface"],
+            "suffix": p.get("suffix", False),
             "lemma": top["lemma"] if top else None,
             "de": top["gloss"]["de"] if top and top["gloss"] else None,
             "en": top["gloss"]["en"] if top and top["gloss"] else None,
